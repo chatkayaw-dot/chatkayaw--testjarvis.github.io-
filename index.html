@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -1921,6 +1919,117 @@
       background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(99,102,241,0.08));
       border-color: rgba(16,185,129,0.25);
       color: #e2e8f0;
+    }
+
+    /* Arama sırasında — sorgu tek satırda kısalsın, satır uzamasın */
+    .search-loading--compact {
+      align-items: flex-start;
+      max-width: 100%;
+      gap: 10px;
+    }
+    .search-loading-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      flex: 1;
+    }
+    .search-loading-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+    .dark .search-loading-label { color: #94a3b8; }
+    .search-query-highlight--clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+      white-space: normal;
+      line-height: 1.35;
+      max-width: 100%;
+    }
+
+    /* Arama özeti — tek satır (kart listesi yok) */
+    .search-compact-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 10px;
+      padding: 4px 0 2px;
+      max-width: 100%;
+    }
+    .search-compact-query {
+      font-size: 0.72rem;
+      color: #64748b;
+      min-width: 0;
+      flex: 1 1 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .dark .search-compact-query { color: #94a3b8; }
+    .search-compact-meta {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      flex-shrink: 0;
+    }
+    .dark .search-compact-meta { color: #64748b; }
+
+    /* Yanıt sonrası — tıklanabilir yuvarlak site etiketleri */
+    .web-search-source-pills {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(226, 232, 240, 0.95);
+    }
+    .dark .web-search-source-pills {
+      border-top-color: rgba(51, 65, 85, 0.55);
+    }
+    .web-search-source-pills-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .dark .web-search-source-pills-label { color: #64748b; }
+    .web-search-source-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .search-source-site-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.68rem;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.09);
+      color: #4f46e5;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      text-decoration: none;
+      font-weight: 500;
+      max-width: min(220px, 92vw);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .search-source-site-pill:hover {
+      background: rgba(99, 102, 241, 0.14);
+      border-color: rgba(99, 102, 241, 0.35);
+    }
+    .dark .search-source-site-pill {
+      background: rgba(99, 102, 241, 0.16);
+      color: #a5b4fc;
+      border-color: rgba(99, 102, 241, 0.28);
+    }
+    .search-source-site-pill--static {
+      cursor: default;
+      pointer-events: none;
+      opacity: 0.85;
     }
 
     .streaming-cursor {
@@ -8974,9 +9083,12 @@ Sadece bu iki formattan birini yaz.`;
             noteDiv.className = 'message-bubble bot-message';
             noteDiv.innerHTML = `
               <div class="message-content">
-                <div class="search-loading">
+                <div class="search-loading search-loading--compact">
                   <div class="search-loading-spinner"></div>
-                  <span class="text-xs text-gray-500 dark:text-gray-400">Cevap doğrulanıyor: <span class="search-query-highlight">${escapeHTML(searchQuery)}</span></span>
+                  <div class="search-loading-text">
+                    <span class="search-loading-label">Cevap doğrulanıyor</span>
+                    <span class="search-query-highlight search-query-highlight--clamp" title="${escapeHTML(searchQuery)}">${escapeHTML(searchQuery)}</span>
+                  </div>
                 </div>
               </div>`;
             chatMessages.appendChild(noteDiv);
@@ -8991,7 +9103,7 @@ Sadece bu iki formattan birini yaz.`;
               verifyDiv.innerHTML = `
                 <div class="message-content">
                   <div style="font-size:0.72rem;color:#f59e0b;font-weight:600;margin-bottom:6px">📌 Güncel kaynaklarla doğrulandı</div>
-                  ${renderSearchResults(results, searchQuery)}
+                  ${renderSearchCompactHeader(results, searchQuery)}
                 </div>
                 <div class="message-time">${getCurrentTime()}</div>`;
               chatMessages.appendChild(verifyDiv);
@@ -9077,9 +9189,12 @@ Sadece bu iki formattan birini yaz.`;
       searchingDiv.className = 'message-bubble bot-message';
       searchingDiv.innerHTML = `
         <div class="message-content">
-          <div class="search-loading">
+          <div class="search-loading search-loading--compact">
             <div class="search-loading-spinner"></div>
-            <span class="text-xs text-gray-500 dark:text-gray-400">${isDeep ? '🔬 Derinlemesine araştırılıyor' : 'İnternette aranıyor'}: <span class="search-query-highlight">${escapeHTML(query)}</span></span>
+            <div class="search-loading-text">
+              <span class="search-loading-label">${isDeep ? '🔬 Derinlemesine aranıyor' : '🌐 İnternette aranıyor'}</span>
+              <span class="search-query-highlight search-query-highlight--clamp" title="${escapeHTML(query)}">${escapeHTML(query)}</span>
+            </div>
           </div>
         </div>
       `;
@@ -9151,7 +9266,7 @@ Sadece bu iki formattan birini yaz.`;
       resultsDiv.className = 'message-bubble bot-message';
       resultsDiv.innerHTML = `
         <div class="message-content">
-          ${renderSearchResults(filteredResults, originalQuery)}
+          ${renderSearchCompactHeader(filteredResults, originalQuery)}
         </div>
       `;
       chatMessages.appendChild(resultsDiv);
@@ -9165,48 +9280,71 @@ Sadece bu iki formattan birini yaz.`;
       ).join('\n');
       
       const isNewsContext = /haber|son dakika|güncel|gelişme|açıkladı|duyurdu|gündeme|bombalı|saldırı|yangın|deprem|seçim|iktidar|muhalefet|olay|olay|cumhurbaşkanı|bakan|meclis|protesto|kavga|trafik|ölü|yaralı|tutuklama|gözaltı/i.test(originalQuery);
-      await startAIAnalysis(originalQuery, formattedResults, chatMessages, { sport, isComparison: isComparisonQuery(originalQuery), isDeepResearch: isDeep, contextCategory: isNewsContext ? 'news' : undefined });
+      await startAIAnalysis(originalQuery, formattedResults, chatMessages, { sport, isComparison: isComparisonQuery(originalQuery), isDeepResearch: isDeep, contextCategory: isNewsContext ? 'news' : undefined, sourceResults: filteredResults });
     }
 
-    function renderSearchResults(results, query) {
-      const displayResults = results.slice(0, 5);
-
-      let html = `<div class="search-results-wrap">`;
-
-      // Başlık
-      html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;opacity:0.9">
-        <span class="search-source-pill">
-          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          Web
-        </span>
-        <span style="font-size:0.72rem;color:#94a3b8">"<span class="search-query-highlight">${escapeHTML(query)}</span>"</span>
-        <span style="font-size:0.68rem;color:#cbd5e1;margin-left:auto">${results.length} kaynak</span>
+    /** İnternet araması — kısa özet satırı (uzun kart listesi yok) */
+    function renderSearchCompactHeader(results, query) {
+      const n = results && results.length ? results.length : 0;
+      const maxQ = 72;
+      const q = (query || '').trim();
+      const qShort = q.length > maxQ ? q.slice(0, maxQ) + '…' : q;
+      return `<div class="search-results-wrap">
+        <div class="search-compact-strip">
+          <span class="search-source-pill">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Web
+          </span>
+          <span class="search-compact-query" title="${escapeHTML(q)}">"${escapeHTML(qShort)}"</span>
+          <span class="search-compact-meta">${n} kaynak · yanıt hazırlanıyor</span>
+        </div>
       </div>`;
+    }
 
-      // Sonuç kartları
-      displayResults.forEach((result, idx) => {
-        const dateStr = result.publishedDate
-          ? new Date(result.publishedDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })
-          : '';
-        html += `<div class="search-result-item">
-          <div class="search-result-title">
-            <span style="color:#cbd5e1;font-size:0.65rem;margin-right:2px">${idx + 1}.</span>
-            ${result.url
-              ? `<a href="${escapeHTML(result.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(result.title)}</a>`
-              : escapeHTML(result.title)}
-          </div>
-          <div class="search-result-snippet">${escapeHTML(result.snippet.substring(0, 150))}${result.snippet.length > 150 ? '…' : ''}</div>
-          <div class="search-result-source">
-            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-            ${escapeHTML(result.source)}
-            ${dateStr ? `<span style="margin-left:3px;opacity:0.55">${dateStr}</span>` : ''}
-            ${result.url ? `<a href="${escapeHTML(result.url)}" target="_blank" rel="noopener noreferrer" style="margin-left:auto;color:#818cf8;font-size:0.65rem;text-decoration:none">↗</a>` : ''}
-          </div>
-        </div>`;
-      });
+    /** AI yanıtının altına tıklanabilir yuvarlak kaynak etiketleri */
+    function appendWebSearchSourcePills(botMessageDiv, results) {
+      if (!botMessageDiv || !results || !results.length) return;
+      if (botMessageDiv.querySelector('.web-search-source-pills')) return;
+      const list = results.filter(r => r && r.source !== 'Tavily AI Özet');
+      if (!list.length) return;
 
-      html += `</div>`;
-      return html;
+      const wrap = document.createElement('div');
+      wrap.className = 'web-search-source-pills';
+      const label = document.createElement('div');
+      label.className = 'web-search-source-pills-label';
+      label.textContent = 'Aranan siteler';
+      const row = document.createElement('div');
+      row.className = 'web-search-source-pills-row';
+
+      const seen = new Set();
+      for (const r of list) {
+        if (row.children.length >= 14) break;
+        let host = (r.source || '').replace(/^https?:\/\//i, '').split('/')[0] || '';
+        try {
+          if (r.url) host = new URL(r.url).hostname.replace(/^www\./i, '') || host;
+        } catch (_e) {}
+        const key = (r.url || host || r.title || '').toLowerCase();
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+
+        const pill = document.createElement(r.url ? 'a' : 'span');
+        pill.className = 'search-source-site-pill' + (r.url ? '' : ' search-source-site-pill--static');
+        const text = host || (r.title ? String(r.title).slice(0, 28) : 'Kaynak');
+        pill.textContent = text.length > 32 ? text.slice(0, 30) + '…' : text;
+        if (r.url) {
+          pill.href = r.url;
+          pill.target = '_blank';
+          pill.rel = 'noopener noreferrer';
+        }
+        row.appendChild(pill);
+      }
+
+      if (!row.children.length) return;
+      wrap.appendChild(label);
+      wrap.appendChild(row);
+      const actions = botMessageDiv.querySelector('.message-actions');
+      if (actions) botMessageDiv.insertBefore(wrap, actions);
+      else botMessageDiv.appendChild(wrap);
     }
 
 
@@ -11894,49 +12032,9 @@ ${languageInstruction}`
       chevron.style.transform = 'rotate(180deg)';
 
       try {
-        // ── ADIM 1: gpt-oss-120b'den ham kod al (prompt kuralları yok) ──
-        codeLabel.textContent = '⚡ Ham kod alınıyor...';
-        body.textContent = 'gpt-oss-120b kaynak kodu üretiyor...';
-
-        const userMsg = messages[messages.length - 1]?.content || '';
-        const rawCodeMessages = [
-          { role: 'system', content: 'You are a code generator. Output only raw working code with no explanation, no markdown, no comments unless necessary. Just the code.' },
-          { role: 'user', content: typeof userMsg === 'string' ? userMsg : JSON.stringify(userMsg) }
-        ];
-
-        let rawCode = '';
-        try {
-          const rawResp = await fetch(secure.apiUrl, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${secure.apiKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              messages: rawCodeMessages,
-              model: 'openai/gpt-oss-120b',
-              temperature: 0.2,
-              max_tokens: 4096,
-              stream: false
-            })
-          });
-          if (rawResp.ok) {
-            const rawData = await rawResp.json();
-            rawCode = rawData.choices?.[0]?.message?.content?.trim() || '';
-          }
-        } catch(e) { /* sessizce geç */ }
-
-        // ── ADIM 2: Scout ham kodu alıp düzenli sunar ──
-        codeLabel.textContent = '📝 Scout düzenliyor...';
-        body.textContent = rawCode ? `Ham kod alındı (${rawCode.length} karakter). Scout düzenliyor...` : 'Doğrudan Scout yazıyor...';
-
-        // Ham kodu Scout mesajlarına enjekte et
-        const scoutMessages = [...messages];
-        if (rawCode) {
-          const lastUser = scoutMessages[scoutMessages.length - 1];
-          const userContent = typeof lastUser.content === 'string' ? lastUser.content : JSON.stringify(lastUser.content);
-          scoutMessages[scoutMessages.length - 1] = {
-            role: 'user',
-            content: `${userContent}\n\n[Referans kaynak kod — düzenle, açıkla, Türkçe yorum ekle]:\n\`\`\`\n${rawCode}\n\`\`\``
-          };
-        }
+        // ── Qwen3-32b doğrudan stream ──
+        codeLabel.textContent = '⚡ Kod üretiliyor...';
+        body.textContent = 'kimi-k2 yazıyor...';
 
         let retries = 0;
         const maxRetries = 3;
@@ -11946,9 +12044,9 @@ ${languageInstruction}`
             method: 'POST',
             headers: { 'Authorization': `Bearer ${secure.apiKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              messages: scoutMessages,
-              model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-              temperature: 0.3,
+              messages: messages,
+              model: 'moonshotai/kimi-k2-instruct-0905',
+              temperature: 0.2,
               max_tokens: maxTokens,
               top_p: 1,
               stream: true
@@ -12003,7 +12101,6 @@ ${languageInstruction}`
               if (isTTSEnabled) speak(answerAcc);
               renderAllLaTeX();
               await saveCurrentChat();
-              silentCodeAudit(answerAcc, wrapperDiv);
               scrollToBottom();
               return;
             }
@@ -12656,21 +12753,17 @@ Net, detaylı ve doğrudan yanıt ver. ${languageInstruction}`;
       const newText = textarea.value.trim();
       if (!newText) return;
 
-      if (chatHistory[msgIndex]) {
-        chatHistory[msgIndex].content = newText;
-      }
-      contentDiv.textContent = newText;
-
-      // Bu mesajdan sonraki tüm mesajları sil
+      // Düzenlenen balon dahil sonraki her şeyi DOM'dan kaldır
       const chatMessages = document.getElementById('chat-messages');
       const allBubbles = Array.from(chatMessages.querySelectorAll('.message-bubble'));
       const bubbleIdx = allBubbles.indexOf(bubble);
-      for (let i = allBubbles.length - 1; i > bubbleIdx; i--) {
+      for (let i = allBubbles.length - 1; i >= bubbleIdx; i--) {
         allBubbles[i].remove();
       }
-      chatHistory.splice(msgIndex + 1);
+      // History'den bu mesaj dahil sonrasını temizle — sendMessage yeniden ekleyecek
+      chatHistory.splice(msgIndex);
 
-      // Yeniden gönder
+      // sendMessage yeni user bubble + AI yanıtını üretecek
       const input = document.getElementById('chat-input');
       input.value = newText;
       sendMessage();
@@ -13328,6 +13421,12 @@ let __lastSendTimestamp = 0;
       try {
       const input = document.getElementById('chat-input');
       let message = input.value.trim();
+      // Mesajı hemen temizle — async işlemler başlamadan önce
+      if (message) {
+        input.value = '';
+        input.style.height = 'auto';
+        autoResizeTextarea();
+      }
       // Dosya varsa soruyu chat-input'tan al
       if (currentUploadedFile) {
         const fileQuestion = message || '(Bu dosyayı analiz et ve içeriğini açıkla)';
@@ -13414,25 +13513,46 @@ let __lastSendTimestamp = 0;
         }
       }
 
+      // ── KULLANICI MESAJINI HEMEN EKRANA EKLE (async işlemlerden önce) ──
+      const chatMessages = document.getElementById('chat-messages');
+      const userMessageDiv = document.createElement('div');
+      userMessageDiv.className = 'message-bubble user-message';
+      userMessageDiv.innerHTML = `
+        <div class="message-content">${escapeHTML(message)}</div>
+        <div class="message-time">${getCurrentTime()}</div>
+      `;
+      maybeInsertDateSeparator(chatMessages);
+      chatMessages.appendChild(userMessageDiv);
+      chatHistory.push({ role: 'user', content: message });
+      const userMsgIndex = chatHistory.length - 1;
+      addUserMessageActions(userMessageDiv, userMsgIndex);
+
+      // Parçacık efekti
+      const sendBtn = document.getElementById('send-message-btn');
+      if (sendBtn) {
+        const rect = sendBtn.getBoundingClientRect();
+        createSendParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      }
+      scrollToBottom();
+
       // ── ADIM 3: Yeni arama gerektiriyor mu? ──
-      // Önce kural motoru, kaçırdıysa LLM fallback devreye girer.
-      // Her iki durumda da sorgu, LLM optimizatörüne gönderilir.
-      let _ruleSearch = shouldAutoSearch(message);
+      // Kod yazma modunda arama ve LLM intent check atlanır — tek çağrı yeterli.
+      let _ruleSearch = codeWritingMode ? false : shouldAutoSearch(message);
       let _searchQuery = message;
 
-      if (!_ruleSearch) {
-        // Kural yakalamadı → LLM'e sor (karar + optimize sorgu birlikte gelir)
-        const llmDecision = await llmIntentCheck(message);
-        console.log('[JARVIS] LLM intent karar:', JSON.stringify(llmDecision), '| mesaj:', message);
-        if (llmDecision.shouldSearch) {
-          _ruleSearch = true;
-          _searchQuery = llmDecision.query || message;
+      if (!codeWritingMode) {
+        if (!_ruleSearch) {
+          const llmDecision = await llmIntentCheck(message);
+          console.log('[JARVIS] LLM intent karar:', JSON.stringify(llmDecision), '| mesaj:', message);
+          if (llmDecision.shouldSearch) {
+            _ruleSearch = true;
+            _searchQuery = llmDecision.query || message;
+          }
+        } else {
+          const optimized = await llmOptimizeQuery(message);
+          console.log('[JARVIS] LLM sorgu optimizasyonu:', '"' + message + '"', '→', '"' + optimized + '"');
+          _searchQuery = optimized;
         }
-      } else {
-        // Kural motoru "ara" dedi → LLM ile sorguyu optimize et
-        const optimized = await llmOptimizeQuery(message);
-        console.log('[JARVIS] LLM sorgu optimizasyonu:', '"' + message + '"', '→', '"' + optimized + '"');
-        _searchQuery = optimized;
       }
 
       // Yıl ekle (eğer yoksa) — her iki yolda da
@@ -13443,8 +13563,6 @@ let __lastSendTimestamp = 0;
 
       if (_ruleSearch) {
         // Futbol maç takip soruları: bağlamdan maç bilgisi ekle
-        // Örn: "golleri kim attı?" → "Galatasaray - Fenerbahçe gol atan oyuncular..."
-        // Örn: "maçın oyuncusu kim?" → "Galatasaray - Fenerbahçe ilk 11 kadro oyuncular..."
         let searchMessage = _searchQuery;
         if (lastMatch && lastMatch.teams) {
           const lowerMsg = message.toLowerCase().trim();
@@ -13459,10 +13577,8 @@ let __lastSendTimestamp = 0;
             searchMessage = `${lastMatch.teams} maç özeti istatistikler dakikalar var kararı hakem ${new Date().getFullYear()}`;
           }
         }
-        const displayMsg = (searchMessage !== message) ? message : null;
-        await performInternetSearch(searchMessage, { displayMessage: displayMsg });
-        input.value = '';
-        autoResizeTextarea();
+        // Kullanıcı mesajı zaten eklendi, skipUserMessage: true
+        await performInternetSearch(searchMessage, { skipUserMessage: true });
         return;
       }
 
@@ -13473,33 +13589,7 @@ let __lastSendTimestamp = 0;
       } else {
         tokenLimit = calculateOptimalTokenLimit(complexity, false, codeWritingMode, deepThinkingMode);
       }
-      chatHistory.push({ role: 'user', content: message });
-
-      const chatMessages = document.getElementById('chat-messages');
-      const userMessageDiv = document.createElement('div');
-      userMessageDiv.className = 'message-bubble user-message';
-      userMessageDiv.innerHTML = `
-        <div class="message-content">${escapeHTML(message)}</div>
-        <div class="message-time">${getCurrentTime()}</div>
-      `;
-      maybeInsertDateSeparator(chatMessages);
-      chatMessages.appendChild(userMessageDiv);
-
-      // Mesaj işlem butonları ekle
-      const userMsgIndex = chatHistory.length - 1;
-      addUserMessageActions(userMessageDiv, userMsgIndex);
-
-      // Parçacık efekti
-      const sendBtn = document.getElementById('send-message-btn');
-      if (sendBtn) {
-        const rect = sendBtn.getBoundingClientRect();
-        createSendParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
-      }
-
-      scrollToBottom();
-      
-      input.value = '';
-      autoResizeTextarea();
+      // (chatHistory.push ve userMessageDiv zaten yukarıda yapıldı)
       
       try {
         const memory = getMemory();
@@ -14785,6 +14875,8 @@ GENEL DOĞRULUK KURALLARI:
         const input = document.getElementById('chat-input');
         const message = input.value.trim();
         if (message) {
+          input.value = '';
+          if (typeof autoResizeTextarea === 'function') autoResizeTextarea();
           performInternetSearch(message);
         } else {
           const searchQuery = prompt('İnternette ne aramak istiyorsunuz?');
@@ -15960,55 +16052,6 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
     }
 
     // ---------- MESAJ DÜZENLEME ----------
-    function editUserMessage(msgDiv) {
-      if (!msgDiv) return;
-      const contentDiv = msgDiv.querySelector('.message-content');
-      if (!contentDiv) return;
-      const originalText = contentDiv.textContent.trim();
-      const textarea = document.createElement('textarea');
-      textarea.className = 'msg-edit-area';
-      textarea.value = originalText;
-
-      const saveBtn = document.createElement('button');
-      saveBtn.textContent = 'Kaydet & Gönder';
-      saveBtn.style.cssText = 'margin-top:6px;padding:4px 12px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;';
-
-      const cancelBtn = document.createElement('button');
-      cancelBtn.textContent = 'İptal';
-      cancelBtn.style.cssText = 'margin-top:6px;margin-left:6px;padding:4px 12px;background:#e5e7eb;color:#374151;border:none;border-radius:8px;cursor:pointer;font-size:13px;';
-
-      contentDiv.innerHTML = '';
-      contentDiv.appendChild(textarea);
-      contentDiv.appendChild(document.createElement('br'));
-      contentDiv.appendChild(saveBtn);
-      contentDiv.appendChild(cancelBtn);
-      textarea.focus();
-
-      cancelBtn.addEventListener('click', () => {
-        contentDiv.innerHTML = escapeHTML(originalText);
-      });
-
-      saveBtn.addEventListener('click', async () => {
-        const newText = textarea.value.trim();
-        if (!newText) return;
-        contentDiv.textContent = newText;
-
-        // chatHistory içinde bu mesajı güncelle
-        const msgIndex = Array.from(document.getElementById('chat-messages').children).indexOf(msgDiv);
-        const histIdx = chatHistory.findIndex((m, i) => m.role === 'user' && i >= Math.max(0, chatHistory.length - 20));
-        // Basit yaklaşım: son kullanıcı mesajını bul
-        for (let i = chatHistory.length - 1; i >= 0; i--) {
-          if (chatHistory[i].role === 'user' && chatHistory[i].content === originalText) {
-            chatHistory[i].content = newText;
-            break;
-          }
-        }
-        // Yeniden gönder
-        hapticFeedback('light');
-        await sendDirectMessage(newText);
-      });
-    }
-
     async function sendDirectMessage(message) {
       const chatMessages = document.getElementById('chat-messages');
       const complexity = determineQuestionComplexity(message);
@@ -16234,12 +16277,9 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         b.style.cssText = 'font-size:13px;padding:3px 7px;border-radius:12px;border:none;background:rgba(255,255,255,0.2);cursor:pointer;';
         b.addEventListener('click', fn); return b;
       };
-      actDiv.appendChild(mkBtn('✏️','Düzenle', () => { if(typeof editUserMessage==='function') editUserMessage(msgDiv); }));
-      actDiv.appendChild(mkBtn('📌','Sabitle', () => { const t=msgDiv.querySelector('.message-content')?.textContent?.trim()||''; if(typeof togglePin==='function') togglePin(t); }));
-      actDiv.appendChild(mkBtn('🗑️','Sil', () => { if(confirm('Bu mesajı silmek istediğinize emin misiniz?') && typeof deleteMessage==='function') deleteMessage(msgDiv); }));
-      msgDiv.style.position='relative';
-      msgDiv.appendChild(actDiv);
-      msgDiv.addEventListener('contextmenu', (e) => { if(typeof showMsgContextMenu==='function') showMsgContextMenu(e,msgDiv,isUser); });
+      // Kullanıcı mesajları için legacy butonlar devre dışı —
+      // addUserMessageActions zaten altta düzenle/kopyala/sil ekliyor.
+      return;
     }
     // Eski addMessageActions çağrılarını legacy wrapper'a yönlendir (override)
     // SADECE aşağıdaki override bloğu için kullanılan iç fonksiyon:

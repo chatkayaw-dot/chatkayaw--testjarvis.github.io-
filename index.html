@@ -1,4 +1,4 @@
--
+
 
 <!DOCTYPE html>
 <html lang="tr">
@@ -1992,6 +1992,12 @@
       opacity: 1;
       transform: translateY(0) scale(1);
       pointer-events: all;
+    }
+
+    /* #voice-live-screen display:flex, Tailwind .hidden'dan yüksek özgüllükte — kapalıyken yine flex kalıyordu;
+       translateY(30px) + şeffaflık üstte gövde rengi şeridi yaratıyordu (mobilde "boşluk"). */
+    #voice-live-screen.hidden {
+      display: none !important;
     }
 
     #voice-live-close {

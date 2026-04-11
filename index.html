@@ -5157,18 +5157,32 @@
     .hljs-attr { color: #f9e2af; }
     .dark .hljs-keyword { text-shadow: 0 0 8px rgba(203, 166, 247, 0.15); }
     .dark .hljs-string { text-shadow: 0 0 8px rgba(166, 227, 161, 0.1); }
-    /* Sohbet adı düzenleme */
+    /* Sohbet adı düzenleme — mavi kalem (sil butonunun solunda) */
     .chat-name-edit-btn {
-      opacity: 1;
-      transition: opacity 0.2s;
+      opacity: 1 !important;
+      flex-shrink: 0;
+      transition: background-color 0.2s, color 0.2s;
       background: none;
       border: none;
-      color: #6b7280;
+      color: #2563eb;
       cursor: pointer;
-      padding: 2px 4px;
+      padding: 5px;
+      margin-right: 2px;
+      border-radius: 6px;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
     }
-    #chat-history-list li:hover .chat-name-edit-btn {
-      opacity: 1;
+    .chat-name-edit-btn:hover {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+    }
+    .dark .chat-name-edit-btn {
+      color: #60a5fa;
+    }
+    .dark .chat-name-edit-btn:hover {
+      background-color: rgba(30, 58, 138, 0.35);
+      color: #93c5fd;
     }
     /* Kalem ve çöp kutusu butonları her zaman görünsün (mobil dahil) */
     @media (max-width: 768px) {
@@ -7585,7 +7599,11 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
 
       // Çok kısa / sohbet kalıpları → LLM'e bile sorma
       if (wordCount <= 1) return { shouldSearch: false };
-      if (/^(merhaba|selam|nasılsın|teşekkürler?|tamam|evet|hayır|anladım|peki|güzel|iyi\s*ki|ok|neyse|haha|hmm|👍|👎)\b/.test(lower)) {
+
+      // Saf selamlama — sadece mesaj selamdan ibaretse ve arkasında gerçek bir soru/konu yoksa atla.
+      // "selam dostum manifest grubunun en iyi şarkısı" gibi selamla başlayan ama soru içeren mesajlar geçmeli.
+      const greetingOnlyPattern = /^(merhaba|selam|nasılsın|teşekkürler?|tamam|evet|hayır|anladım|peki|güzel|iyi\s*ki|ok|neyse|haha|hmm|👍|👎)(\s+(dostum|ya|be|hocam|kanka|abi|abla|kardeşim|bro|lan))?[!.,\s]*$/i;
+      if (greetingOnlyPattern.test(lower)) {
         return { shouldSearch: false };
       }
       // Saf matematik / kod
@@ -7622,40 +7640,158 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
             messages: [
               {
                 role: 'system',
-                content: `Sen bir arama karar motorusun. Varsayılan kararın HER ZAMAN "ara"dır. Sadece aşağıdaki net istisnalar varsa "arama yapma" dersin, bunların dışında MUTLAKA ara.
+                content: `Sen bir arama karar motorusun. Görevin tek ve kritik: kullanıcının mesajının web araması gerektirip gerektirmediğine DOĞRU karar vermek.
 
-ARAMA YAPMA — SADECE bu durumlarda:
-1. Saf matematik işlemi (2+2, integral, türev)
-2. Kod yazma / algoritma sorusu
-3. Genel kavram tanımı — özel isim veya kurum adı İÇERMİYORSA
-4. Dil bilgisi / çeviri / gramer
-5. Yaratıcı içerik üretimi (hikaye yaz, şiir yaz)
-6. Selamlama / sohbet / kullanıcının kendi görüşü
+═══════════════════════════════════════════════════════════════
+TEMEL FELSEFE: Varsayılan karar her zaman "ARA"dır.
+"Arama yapma" kararı sadece aşağıdaki açık istisnalarda verilir.
+Şüphe durumunda → ARA. Yanılma ihtimalin varsa → ARA.
+Bilgin eski olabilir mi? → ARA. Özel isim/marka geçiyor mu? → ARA.
+═══════════════════════════════════════════════════════════════
 
-MUTLAKA ARA — bu kalıplardan herhangi biri geçerliyse:
-- "[ürün/hizmet/özellik] [ülke]'de var mı / çıktı mı / kullanılabilir mi / mevcut mu" → KESİNLİKLE ARA (bölgesel müsaitlik her zaman değişir)
-- "[şirket/marka] [ülke] [fiyat/servis/mağaza/destek]" → ARA
-- "en son / güncel / şu an / hâlâ / artık / yeni" içeren sorular → ARA
-- Herhangi bir ürün, yazılım, özellik, platform adı + soru → ARA
-- Herhangi bir kişi, kurum, okul, şirket hakkında bilgi → ARA
-- Emin olamayacağın, değişmiş olabilecek her bilgi → ARA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ARAMA YAPMA — SADECE bu 6 kategoride:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ÖRNEKLER (ARA):
-- "Apple Intelligence Türkiye'de var mı" → shouldSearch: true (bölgesel müsaitlik güncel bilgi gerektirir)
-- "ChatGPT Plus fiyatı ne kadar" → shouldSearch: true
-- "Tesla Türkiye servis" → shouldSearch: true
-- "Mektebim Koleji yönetim kadrosu" → shouldSearch: true
-- "Survivor 2026 yarışmacılar" → shouldSearch: true
-- "iOS 18 Türkiye çıktı mı" → shouldSearch: true
-- "Instagram yeni özellik" → shouldSearch: true
+1. SAF MATEMATİK İŞLEMİ
+   Sadece sayı ve operatör içeren hesaplamalar.
+   ✓ "2+2 kaç", "137 * 48", "sin(90) nedir", "türev al: x²+3x"
+   ✗ ARAMA YAP eğer içinde bir marka/kurum/kişi adı da varsa.
 
-ÖRNEKLER (ARAMA YAPMA):
-- "2+2 kaç" → shouldSearch: false
-- "Python'da for döngüsü nasıl yazılır" → shouldSearch: false
-- "Merhaba nasılsın" → shouldSearch: false
-- "Fotosentez nedir" → shouldSearch: false
+2. KOD YAZMA / YAZILIM MİMARİSİ
+   Sıfırdan algoritma veya fonksiyon yazmak.
+   ✓ "Python'da bubble sort yaz", "React'ta useState nasıl kullanılır"
+   ✗ ARAMA YAP eğer "Bu kütüphanenin son versiyonu nedir?" gibi güncel bilgi soruluyorsa.
 
-Kural: fazla arama yap, az arama yapma. Yanlış bilgi vermek fazla aramaktan çok daha kötüdür.
+3. EVRENSEL KAVRAM TANIMI — özel isim YOKSA
+   Herhangi bir özel isim, kurum, ürün, kişi adı içermeyen saf kavram soruları.
+   ✓ "Fotosentez nedir", "Demokrasi ne demek", "Entropi nedir"
+   ✗ ARAMA YAP eğer "X şirketinin yöntemi nedir" gibi bir kuruma bağlıysa.
+
+4. DİL BİLGİSİ / ÇEVİRİ / GRAMER
+   Kelime anlamı, cümle çevirisi, yazım kuralı.
+   ✓ "Ephemeral ne demek", "Bu cümleyi İngilizceye çevir", "Hangi harf büyük yazılır"
+   ✗ ARAMA YAP eğer bir markanın/ürünün adı çevriliyorsa veya güncel slang soruluyorsa.
+
+5. YARATICI İÇERİK ÜRETİMİ — genel tema, özel isim YOKSA
+   Kurgusal hikaye, şiir, senaryo, fikir üretimi.
+   ✓ "Bir deniz macerasıyla ilgili kısa hikaye yaz", "Özgürlük üzerine şiir"
+   ✗ ARAMA YAP eğer gerçek bir kişi/marka/eser referans verilmişse: "Radiohead tarzında şarkı sözü yaz" → ARA (band hakkında bilgi gerekebilir).
+
+6. SELAMLAMA / SOHBET / KULLANICININ KENDİ GÖRÜŞÜ
+   Kişisel durum, his paylaşımı, genel sohbet.
+   ✓ "Merhaba nasılsın", "Bugün çok yoruldum", "Sence hayatın anlamı ne"
+   ✗ ARAMA YAP eğer kendi görüşünü sormakla birlikte gerçek bir olay/kişi/eser hakkında bilgi de isteniyorsa.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MUTLAKA ARA — bu kategorilerden herhangi biri geçerliyse:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎵 MÜZİK & SANATÇI SORULARI — HEPSİNDE ARA
+   Bir sanatçı, grup, albüm, şarkı veya müzik platformu hakkında herhangi bir soru.
+   En çok dinlenen şarkı, albüm sıralaması, streaming istatistikleri, çıkış tarihleri,
+   tur tarihleri, yeni müzik, sanatçı biyografisi, ödüller, işbirlikleri — TÜMÜ değişir.
+   ✓ "Manifest grubunun en çok dinlenen şarkısı" → ARA
+   ✓ "Coldplay yeni albümü ne zaman çıkıyor" → ARA
+   ✓ "Spotify'da en çok dinlenen Türkçe şarkı" → ARA
+   ✓ "Weekend en ünlü şarkısı hangisi" → ARA
+
+🎬 FİLM / DİZİ / ANİMASYON / OYUN
+   Herhangi bir yapım, yönetmen, oyuncu, çıkış tarihi, reytingler, sezon bilgisi.
+   ✓ "Squid Game yeni sezon çıktı mı" → ARA
+   ✓ "IMDb'de en yüksek puan alan film" → ARA
+   ✓ "GTA 6 ne zaman çıkıyor" → ARA
+
+⚽ SPOR — SONUÇLAR, STATS, TRANSFER, SKOR
+   Her türlü spor sonucu, skor, lig sıralaması, transfer haberi, oyuncu istatistiği.
+   ✓ "Galatasaray son maç skoru" → ARA
+   ✓ "Mbappe şu an hangi takımda" → ARA
+   ✓ "NBA şampiyon kim" → ARA
+
+📱 TEKNOLOJİ & ÜRÜN — FİYAT, ÖZELLİK, ÇIKIŞ, MÜSAİTLİK
+   Her ürün, yazılım, uygulama, özellik, platform, güncelleme.
+   ✓ "iPhone 17 fiyatı" → ARA
+   ✓ "ChatGPT o3 özellikleri" → ARA
+   ✓ "Apple Intelligence Türkiye'de var mı" → ARA (bölgesel müsaitlik)
+   ✓ "Discord yeni özellik" → ARA
+
+🏢 ŞİRKET / KURUM / OKUL / KURULUŞ
+   CEO, kadro, haberler, finansal durum, kampüs, program, sıralama.
+   ✓ "Mektebim Koleji kayıt dönemleri" → ARA
+   ✓ "Tesla Türkiye yetkili servis" → ARA
+   ✓ "ODTÜ 2026 taban puanları" → ARA
+
+👤 KİŞİ — HAYATTA OLAN HER KİŞİ
+   Güncel rol, pozisyon, proje, sosyal medya, açıklama, röportaj.
+   ✓ "Elon Musk şu an ne yapıyor" → ARA
+   ✓ "Tarkan yeni albüm" → ARA
+   ✓ "Arda Güler bu sezon kaç gol attı" → ARA
+
+📰 HABER / GÜNCEL OLAY / GÜNDEM
+   Her türlü haber, siyasi gelişme, ekonomi, deprem, afet, seçim.
+   ✓ "Dolar kuru bugün" → ARA
+   ✓ "Türkiye seçim sonuçları" → ARA
+   ✓ "Son deprem nerede oldu" → ARA
+
+🛒 FİYAT / İNDİRİM / KAMPANYA / KARŞILAŞTIRMA
+   Her türlü ürün veya hizmet fiyatı, piyasa karşılaştırması.
+   ✓ "MacBook Air M4 fiyatı" → ARA
+   ✓ "Netflix abonelik ücreti" → ARA
+
+📊 SIRALAMA / İSTATİSTİK / LİSTE SORULARI — isim/kurum geçiyorsa
+   "En çok", "en iyi", "en popüler", "kaçıncı", "hangisi daha fazla" türü sorular.
+   ✓ "Dünyada en çok konuşulan dil" → ARA (değişen istatistik)
+   ✓ "Steam'de en çok oynanan oyun" → ARA
+   ✓ "Türkiye'de en çok kullanılan sosyal medya" → ARA
+
+🌍 BÖLGESEL MÜSAİTLİK / ÜLKEYE GÖRE HİZMET
+   Bir ürün veya hizmetin belirli bir ülkede/bölgede var olup olmadığı.
+   ✓ "Revolut Türkiye'de kullanılabilir mi" → ARA
+   ✓ "Starlink Anadolu'ya geliyor mu" → ARA
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ÖRNEKLER — DOĞRU KARARLAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+shouldSearch: TRUE örnekleri:
+- "Manifest grubunun en çok dinlenen şarkısı hangisi" → true (müzik istatistiği, değişir)
+- "BTS en popüler şarkısı" → true (müzik sıralaması)
+- "Weeknd kaç Spotify dinleyicisi var" → true (anlık istatistik)
+- "Survivor 2026 kim kazandı" → true (yarışma sonucu)
+- "Ronaldo bu sezon kaç gol attı" → true (spor istatistiği)
+- "GPT-5 ne zaman çıkıyor" → true (ürün haberi)
+- "Dolar bugün kaç TL" → true (anlık veri)
+- "Netflix Türkiye yeni diziler" → true (platform içerik listesi)
+- "Mektebim Koleji ücretleri" → true (kurumsal bilgi)
+- "Apple Intelligence Türkiye" → true (bölgesel müsaitlik)
+- "En uzun ömürlü hayvan hangisi" → true (bilimsel kayıt değişebilir)
+- "Türkiye nüfusu 2025" → true (istatistik, güncellenir)
+- "Hangi film Oscar aldı 2025" → true (ödül haberi)
+
+shouldSearch: FALSE örnekleri:
+- "2+2 kaç" → false (saf matematik)
+- "Python'da for döngüsü nasıl yazılır" → false (algoritma)
+- "Merhaba nasılsın" → false (sadece selamlama, soru yok)
+- "Selam!" → false (sadece selamlama)
+- "Fotosentez nedir" → false (evrensel tanım, özel isim yok)
+- "Bir uzay macerası hikayesi yaz" → false (yaratıcı, özel isim yok)
+- "Demokrasi ne demek" → false (kavram tanımı)
+- "Türkçede büyük harf kuralları" → false (dil bilgisi)
+
+ÖNEMLİ KURAL — SELAMLA BAŞLAYAN SORULAR:
+Kullanıcı "selam dostum X nedir", "merhaba X hakkında ne biliyorsun" gibi selamla başlayan ama devamında gerçek bir soru/konu içeren mesajlar gönderebilir.
+Bu mesajlarda selamlama sadece giriş cümlesidir — asıl içerik sorudur.
+Dolayısıyla arama kararı selamlama kısmına değil, mesajın geri kalanına göre verilmelidir.
+- "selam dostum manifest grubunun en iyi şarkısı hangisi" → shouldSearch: true (müzik sorusu, selamlama görmezden gel)
+- "merhaba ChatGPT Plus fiyatı ne kadar" → shouldSearch: true (fiyat sorusu)
+- "selam nasılsın" → shouldSearch: false (gerçekten sadece selamlama)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ZORUNLU ÇIKIŞ FORMATI — sadece geçerli JSON:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{ "shouldSearch": true/false, "confidence": 0.0-1.0, "query": "optimize edilmiş arama terimi veya null" }
+
+Karar: Şüphe varsa → shouldSearch: true. Az arama yapmak, fazla aramaktan çok daha tehlikelidir. Yanlış bilgi güvenden daha zararlıdır.
 Sadece JSON döndür, başka hiçbir şey yazma.`
               },
               {
@@ -7731,23 +7867,7 @@ Arama gerekli mi? JSON döndür:`
             messages: [
               {
                 role: 'system',
-                content: `Sen bir arama sorgusu optimizasyon motorusun. Görevin: kullanıcının doğal dil sorusunu, web arama motorunda en iyi sonucu verecek kısa ve öz arama terimine dönüştürmek.
-
-KURALLAR:
-- Gereksiz kelimeleri at: "bana söyle", "öğrenmek istiyorum", "acaba", "ya", "yani" vb.
-- Özel isimleri, marka adlarını, ürün adlarını aynen koru
-- Coğrafi bağlam varsa ekle (ör: Türkiye, İstanbul)
-- Yıl ekleme — bu ayrıca işleniyor
-- 2-7 kelime arası, Türkçe veya İngilizce (soruya göre)
-- Sadece optimize edilmiş sorguyu yaz, başka hiçbir şey yazma
-- Konuşma bağlamını kullan: "bu oyun", "o film" gibi zamirler varsa bağlamdan gerçek ismi koy
-
-ÖRNEKLER:
-"iPhone 16 Pro Max ne kadar" → "iPhone 16 Pro Max fiyat Türkiye"
-"ChatGPT Plus'a nasıl abone olunur" → "ChatGPT Plus abonelik nasıl"
-"Survivor bu yıl kim kazandı" → "Survivor 2025 kazanan"
-"Tesla Model 3 Türkiye'de var mı" → "Tesla Model 3 Türkiye satış"
-"o dizinin yeni sezonu ne zaman çıkıyor" (bağlamda: Squid Game) → "Squid Game yeni sezon çıkış tarihi"`
+                content: `Sen bir arama sorgusu optimizasyon motorusun. Görevin: kullanıcının doğal dil sorusunu, web arama motorunda kesin ve doğru sonucu verecek en etkili arama terimine dönüştürmek.\n\nTEMEL KURALLAR:\n- Dolgu kelimeleri at: "bana söyle", "öğrenmek istiyorum", "acaba", "ya", "yani", "merak ediyorum", "söyle misin" vb.\n- Özel isimleri, marka adlarını, sanatçı/grup adlarını, ürün adlarını TAM OLARAK koru — asla kısaltma\n- Coğrafi bağlam varsa ekle (ör: Türkiye, İstanbul, global)\n- Yıl ekleme — zaten ayrıca üst katmanda işleniyor\n- 2-8 kelime arası, Türkçe veya İngilizce (sanatçı/ürün İngilizce ise İngilizce sorgula)\n- Sadece optimize edilmiş sorguyu yaz, başka hiçbir şey yazma\n- Konuşma bağlamını kullan: "bu oyun", "o film", "bu grup" gibi zamirler varsa bağlamdan gerçek ismi koy\n\nKATEGORIYE GÖRE OPTİMİZASYON:\n\nMÜZİK: En çok dinlenen/popüler şarkı → "[Ad] most streamed songs Spotify" veya "[Ad] en popüler şarkılar"\n  "Manifest grubunun en çok dinlenen şarkısı" → "Manifest group most streamed songs"\n  "BTS en popüler şarkısı" → "BTS most popular songs all time"\n  "Weeknd Spotify dinleyici sayısı" → "The Weeknd Spotify monthly listeners"\n  "Tarkan en sevilen şarkıları" → "Tarkan en popüler şarkılar"\n\nFİLM/DİZİ: Sıralama → "IMDb rating" ekle | Sezon/bölüm → "release date season N"\n  "Squid Game yeni sezon ne zaman" → "Squid Game season 3 release date"\n\nSPOR: Skor → "son maç sonucu" | Transfer → "transfer 2025" | Stats → "stats sezon"\n  "Galatasaray son maç" → "Galatasaray son maç sonucu"\n  "Mbappe hangi takımda" → "Mbappe current team 2025"\n\nTEKNOLOJİ: Fiyat → ülke + "fiyat" | Müsaitlik → "Türkiye availability"\n  "iPhone 17 ne kadar" → "iPhone 17 fiyat Türkiye"\n\nSIRALAMA/İSTATİSTİK: "En çok/en iyi" → platform/kaynak + yıl ekle\n  "Steam en çok oynanan oyun" → "Steam most played games 2025"\n\nGENEL ÖRNEKLER:\n"iPhone 16 Pro Max ne kadar" → "iPhone 16 Pro Max fiyat Türkiye"\n"ChatGPT Plus'a nasıl abone olunur" → "ChatGPT Plus abonelik nasıl"\n"Survivor bu yıl kim kazandı" → "Survivor 2025 kazanan"\n"Tesla Model 3 Türkiye'de var mı" → "Tesla Model 3 Türkiye satış"\n"o dizinin yeni sezonu ne zaman çıkıyor" (bağlamda: Squid Game) → "Squid Game yeni sezon çıkış tarihi"`
               },
               {
                 role: 'user',
@@ -15228,9 +15348,9 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
 
           // Yeniden adlandırma butonu
           const renameBtn = document.createElement('button');
-          renameBtn.className = 'chat-name-edit-btn flex-shrink-0 p-1 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition rounded';
-          renameBtn.title = 'Yeniden Adlandır';
-          renameBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" style="pointer-events:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`;
+          renameBtn.className = 'chat-name-edit-btn';
+          renameBtn.title = 'Sohbet adını değiştir';
+          renameBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" style="pointer-events:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`;
           li.appendChild(renameBtn);
 
           const deleteBtn = document.createElement('button');
@@ -15258,14 +15378,15 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
           li.appendChild(inner);
 
           const renameBtn = document.createElement('button');
-          renameBtn.className = 'chat-name-edit-btn flex-shrink-0 p-1 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition rounded';
-          renameBtn.title = 'Yeniden Adlandır';
-          renameBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" style="pointer-events:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`;
+          renameBtn.className = 'chat-name-edit-btn';
+          renameBtn.title = 'Sohbet adını değiştir';
+          renameBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" style="pointer-events:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`;
           li.appendChild(renameBtn);
 
           const deleteBtn = document.createElement('button');
           deleteBtn.className = 'delete-chat-btn flex-shrink-0 p-1.5 text-red-400 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition rounded hover:bg-red-50 dark:hover:bg-red-900/30';
-          deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" style="pointer-events:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>`;
+          deleteBtn.title = 'Sohbeti Sil';
+          deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" style="pointer-events:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>`;
           li.appendChild(deleteBtn);
 
           fragment.appendChild(li);
@@ -15362,12 +15483,15 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         document.getElementById('welcome-message-bubble').classList.add('hidden');
         document.getElementById('activity-modal').classList.add('hidden');
 
-        // Belirli bir mesaja kaydır
-        if (scrollToMsgIdx !== undefined && scrollToMsgIdx >= 0) {
-          setTimeout(() => {
-            const chatMessages = document.getElementById('chat-messages');
+        // Belirli bir mesaja kaydır — yoksa en alta git (kaydırma .chat-container'da, #chat-messages değil)
+        const _scrollToBottom = () => {
+          if (typeof scrollToBottom === 'function') scrollToBottom(false);
+        };
+
+        setTimeout(() => {
+          const chatMessages = document.getElementById('chat-messages');
+          if (scrollToMsgIdx !== undefined && scrollToMsgIdx >= 0) {
             const allBubbles = chatMessages.querySelectorAll('.message-bubble');
-            // Virtual scroll'da startIndex kayması olabilir, en yakın uygun bubble'ı bul
             const bubbleCount = allBubbles.length;
             const totalMsgs = chatHistory.length;
             const offset = totalMsgs - bubbleCount;
@@ -15375,14 +15499,18 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
             const targetBubble = allBubbles[Math.max(0, adjustedIdx)];
             if (targetBubble) {
               targetBubble.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              // Vurgula
               targetBubble.style.transition = 'outline 0.2s';
               targetBubble.style.outline = '2px solid #8b5cf6';
               targetBubble.style.borderRadius = '18px';
               setTimeout(() => { targetBubble.style.outline = 'none'; }, 2000);
             }
-          }, 300);
-        }
+          } else {
+            // Sohbet açılınca her zaman en sona git — birkaç kez dene (resim/LaTeX yüklemesi için)
+            _scrollToBottom();
+            setTimeout(_scrollToBottom, 150);
+            setTimeout(_scrollToBottom, 400);
+          }
+        }, 100);
       }
     }
 
@@ -15464,6 +15592,12 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
           if (el) { el.classList.add('no-animation'); chatMessages.appendChild(el); }
         });
         renderAllLaTeX();
+        // Render bittikten sonra en alta kaydır (scroll ana .chat-container üzerinde)
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (typeof scrollToBottom === 'function') scrollToBottom(false);
+          });
+        });
         return;
       }
 
@@ -15487,6 +15621,13 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
       }
 
       renderAllLaTeX();
+
+      // Render bittikten sonra en alta kaydır (çift frame — LaTeX/markdown için; scroll .chat-container'da)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (typeof scrollToBottom === 'function') scrollToBottom(false);
+        });
+      });
     }
 
     function virtualLoadMore() {
@@ -16217,21 +16358,6 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         document.getElementById('pinned-panel').classList.add('hidden');
       });
 
-      // Yeniden adlandırma (sohbet listesinden)
-      const chatHistoryList = document.getElementById('chat-history-list');
-      if (chatHistoryList) {
-        chatHistoryList.addEventListener('click', (e) => {
-          const renameBtn = e.target.closest('.chat-name-edit-btn');
-          if (renameBtn) {
-            e.stopPropagation();
-            const li = renameBtn.closest('li');
-            const chatId = li?.getAttribute('data-chat-id');
-            const title = li?.querySelector('.chat-title-span')?.textContent || '';
-            if (chatId) openRenameChat(chatId, title);
-          }
-        });
-      }
-
       // Slash komutları - chat input
       const chatInput = document.getElementById('chat-input');
       if (chatInput) {
@@ -16322,27 +16448,6 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
           if (!m.querySelector('.msg-actions')) addMessageActions(m, isUser);
         });
       }, 800);
-
-      // Rename butonu renderChatHistoryItems'e ekle (monkey-patch)
-      const _origRender = renderChatHistoryItems;
-      renderChatHistoryItems = function(chats, searchTerm) {
-        _origRender(chats, searchTerm);
-        // Her li'ye rename butonu ekle
-        document.querySelectorAll('#chat-history-list li[data-chat-id]').forEach(li => {
-          if (!li.querySelector('.chat-name-edit-btn')) {
-            const editBtn = document.createElement('button');
-            editBtn.className = 'chat-name-edit-btn flex-shrink-0 p-1 text-gray-400 hover:text-blue-500 transition rounded';
-            editBtn.title = 'Yeniden Adlandır';
-            editBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" style="pointer-events:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>`;
-            // Sil butonundan önce ekle
-            const delBtn = li.querySelector('.delete-chat-btn');
-            if (delBtn) li.insertBefore(editBtn, delBtn);
-            else li.appendChild(editBtn);
-          }
-        });
-        // Swipe to delete dinleyicilerini yenile
-        initSwipeToDelete();
-      };
 
       console.log('✅ Jarvis v2 - Tüm yeni özellikler yüklendi!');
     });

@@ -401,6 +401,20 @@
       opacity: 1;
     }
 
+    /* ── Yazı Boyutu Seviyeleri ── */
+    body.font-size-small  .message-content,
+    body.font-size-small  #chat-input { font-size: 13px !important; }
+    body.font-size-medium .message-content,
+    body.font-size-medium #chat-input { font-size: 15px !important; }
+    body.font-size-large  .message-content,
+    body.font-size-large  #chat-input { font-size: 17px !important; }
+    body.font-size-xlarge .message-content,
+    body.font-size-xlarge #chat-input { font-size: 20px !important; }
+
+    body.font-size-small  .message-bubble { padding: 8px 12px !important; }
+    body.font-size-large  .message-bubble { padding: 14px 18px !important; }
+    body.font-size-xlarge .message-bubble { padding: 16px 22px !important; }
+
     /* Bot mesaj link stili */
     .message-content a {
       color: #3b82f6;
@@ -4947,6 +4961,29 @@
           </div>
         </div>
 
+        <!-- Yazı Boyutu -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">🔡 Yazı Boyutu</label>
+          <div class="grid grid-cols-4 gap-2" id="font-size-presets">
+            <button class="font-size-btn py-2.5 border-2 border-transparent rounded-xl text-center hover:border-purple-400 transition bg-gray-50 dark:bg-gray-800" data-size="small">
+              <span class="block text-xs font-bold text-gray-700 dark:text-gray-200" style="font-size:11px;">Aa</span>
+              <span class="block text-xs text-gray-400 mt-0.5" style="font-size:10px;">Küçük</span>
+            </button>
+            <button class="font-size-btn py-2.5 border-2 border-transparent rounded-xl text-center hover:border-purple-400 transition bg-gray-50 dark:bg-gray-800" data-size="medium">
+              <span class="block font-bold text-gray-700 dark:text-gray-200" style="font-size:13px;">Aa</span>
+              <span class="block text-xs text-gray-400 mt-0.5" style="font-size:10px;">Orta</span>
+            </button>
+            <button class="font-size-btn py-2.5 border-2 border-transparent rounded-xl text-center hover:border-purple-400 transition bg-gray-50 dark:bg-gray-800" data-size="large">
+              <span class="block font-bold text-gray-700 dark:text-gray-200" style="font-size:16px;">Aa</span>
+              <span class="block text-xs text-gray-400 mt-0.5" style="font-size:10px;">Büyük</span>
+            </button>
+            <button class="font-size-btn py-2.5 border-2 border-transparent rounded-xl text-center hover:border-purple-400 transition bg-gray-50 dark:bg-gray-800" data-size="xlarge">
+              <span class="block font-bold text-gray-700 dark:text-gray-200" style="font-size:20px;">Aa</span>
+              <span class="block text-xs text-gray-400 mt-0.5" style="font-size:10px;">Ekstra</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Mesaj Balonu Şekli -->
         <div>
           <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">🔵 Mesaj Balonu Şekli</label>
@@ -4997,6 +5034,33 @@
                 <div class="h-7 flex-1 bg-gray-300" style="border-radius:50px;"></div>
               </div>
               <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Hap Şekli</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Gönderme Efekti -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">✨ Gönderme Efekti</label>
+          <div class="grid grid-cols-2 gap-3" id="send-effect-presets">
+            <button class="send-effect-btn p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-purple-400 transition flex flex-col items-center gap-2" data-effect="particles">
+              <span style="font-size:1.5rem;">🎆</span>
+              <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Parçacıklar</span>
+              <span class="text-xs text-gray-400">Renkli konfeti</span>
+            </button>
+            <button class="send-effect-btn p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-purple-400 transition flex flex-col items-center gap-2" data-effect="ripple">
+              <span style="font-size:1.5rem;">💧</span>
+              <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Dalga</span>
+              <span class="text-xs text-gray-400">Ripple efekti</span>
+            </button>
+            <button class="send-effect-btn p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-purple-400 transition flex flex-col items-center gap-2" data-effect="stars">
+              <span style="font-size:1.5rem;">⭐</span>
+              <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Yıldızlar</span>
+              <span class="text-xs text-gray-400">Yıldız patlaması</span>
+            </button>
+            <button class="send-effect-btn p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-purple-400 transition flex flex-col items-center gap-2" data-effect="none">
+              <span style="font-size:1.5rem;">🚫</span>
+              <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Efektsiz</span>
+              <span class="text-xs text-gray-400">Sade gönderim</span>
             </button>
           </div>
         </div>
@@ -7044,10 +7108,10 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
           },
           body: JSON.stringify({
             query: enrichedQuery,
-            search_depth: 'advanced',
+            search_depth: 'basic', // 'advanced' yerine 'basic' → ~2-3x daha hızlı
             include_answer: true,
-            include_raw_content: true,
-            max_results: 20, // Daha fazla ham sonuç → çeşitlendirme sonrası 10 kalır
+            include_raw_content: false, // Ham içerik kapatıldı → payload küçüldü, hızlı yanıt
+            max_results: 7, // Azaltıldı → daha hızlı API yanıtı
             include_images: false,
             include_image_descriptions: false,
             ...(isNewsQuery ? { days: 3 } : isFinanceQuery ? { days: 7 } : isTechQuery ? { days: 30 } : {}),
@@ -7098,7 +7162,7 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
 
         const mapped = sorted.map(r => ({
           title:         r.title || 'Başlık yok',
-          snippet:       r.raw_content ? (r.raw_content.substring(0, 3000) || r.content || '') : (r.content || ''),
+          snippet:       r.content ? r.content.substring(0, 2000) : '',
           url:           r.url,
           source:        extractDomain(r.url),
           score:         r.score || 0,
@@ -7659,7 +7723,7 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
 
     // ── ÖNBELLEK ──────────────────────────────────────────────────────────
     const _intentCache = new Map(); // key → { result, ts }
-    const _INTENT_CACHE_TTL = 5 * 60 * 1000; // 5 dakika
+    const _INTENT_CACHE_TTL = 15 * 60 * 1000; // 15 dakika (artırıldı — gereksiz LLM çağrısı azaltır)
 
     function _intentCacheKey(msg) {
       // Mesajı normalize et: küçük harf, fazla boşluk sil, noktalama kaldır
@@ -7750,7 +7814,7 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
+            model: 'llama-3.1-8b-instant', // Hızlı model — niyet tespiti için yeterli
             max_tokens: 100,
             temperature: 0,
             messages: [
@@ -7977,7 +8041,7 @@ Arama gerekli mi? JSON döndür:`
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
+            model: 'llama-3.1-8b-instant', // Hızlı model — sorgu optimizasyonu için yeterli
             max_tokens: 80,
             temperature: 0,
             messages: [
@@ -12788,6 +12852,75 @@ Net, detaylı ve doğrudan yanıt ver. ${languageInstruction}`;
     // ══════════════════════════════════════════════
 
     function createSendParticles(x, y) {
+      const effect = window._jarvisSendEffect || 'particles';
+      if (effect === 'none') return;
+
+      if (effect === 'ripple') {
+        // Dalga efekti — 3 iç içe genişleyen halka
+        const colors = ['#6366f1', '#8b5cf6', '#3b82f6'];
+        for (let r = 0; r < 3; r++) {
+          const ring = document.createElement('div');
+          ring.style.cssText = `
+            position:fixed;
+            left:${x}px;top:${y}px;
+            width:8px;height:8px;
+            border-radius:50%;
+            border:2px solid ${colors[r]};
+            transform:translate(-50%,-50%) scale(1);
+            opacity:0.9;
+            pointer-events:none;
+            z-index:99999;
+            animation:none;
+          `;
+          document.body.appendChild(ring);
+          const delay = r * 80;
+          setTimeout(() => {
+            ring.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
+            ring.style.transform = 'translate(-50%,-50%) scale(' + (8 + r * 4) + ')';
+            ring.style.opacity = '0';
+          }, delay);
+          setTimeout(() => ring.remove(), 700 + delay);
+        }
+        return;
+      }
+
+      if (effect === 'stars') {
+        // Yıldız patlaması
+        const starColors = ['#fbbf24','#f59e0b','#fde68a','#ffffff','#34d399'];
+        const container = document.createElement('div');
+        container.style.cssText = `position:fixed;left:${x}px;top:${y}px;pointer-events:none;z-index:99999;`;
+        document.body.appendChild(container);
+        for (let i = 0; i < 10; i++) {
+          const star = document.createElement('div');
+          const angle = (Math.PI * 2 * i) / 10;
+          const dist = 25 + Math.random() * 35;
+          const tx = Math.cos(angle) * dist;
+          const ty = Math.sin(angle) * dist;
+          star.textContent = '★';
+          star.style.cssText = `
+            position:absolute;
+            left:-7px;top:-7px;
+            font-size:${10 + Math.random() * 8}px;
+            color:${starColors[Math.floor(Math.random() * starColors.length)]};
+            transition:transform 0.7s ease-out,opacity 0.7s ease-out;
+            opacity:1;
+            transform:translate(0,0) rotate(0deg);
+            pointer-events:none;
+            text-shadow:0 0 6px rgba(255,200,0,0.8);
+          `;
+          container.appendChild(star);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              star.style.transform = `translate(${tx}px,${ty}px) rotate(${180 + Math.random()*180}deg)`;
+              star.style.opacity = '0';
+            });
+          });
+        }
+        setTimeout(() => container.remove(), 800);
+        return;
+      }
+
+      // Varsayılan: particles (renkli konfeti)
       const colors = ['#6366f1', '#8b5cf6', '#3b82f6', '#34d399', '#f59e0b', '#ec4899'];
       const container = document.createElement('div');
       container.className = 'send-particles';
@@ -16509,7 +16642,9 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         bgColor: '#f8fafc',
         userBubbleColor: 'gradient-default',
         bubbleShape: 'modern',
-        fontFamily: 'Inter'
+        fontFamily: 'Inter',
+        sendEffect: 'particles',
+        fontSize: 'medium'
       };
 
       // Gradient ve renk tanımları
@@ -16540,8 +16675,11 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
           const saved = localStorage.getItem('jarvis_custom_theme');
           if (saved) {
             currentTheme = JSON.parse(saved);
+            if (!currentTheme.sendEffect) currentTheme.sendEffect = 'particles';
+            if (!currentTheme.fontSize) currentTheme.fontSize = 'medium';
           }
         } catch(e) {}
+        window._jarvisSendEffect = currentTheme.sendEffect || 'particles';
       }
 
       // Temayı kaydet
@@ -16549,12 +16687,41 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         localStorage.setItem('jarvis_custom_theme', JSON.stringify(currentTheme));
       }
 
-      // Arkaplan uygula
+      // Arkaplan uygula — body + input alanı birlikte güncellenir
       function applyBgColor(color) {
+        let bodyBg, inputBg;
         if (color === 'gradient-purple') {
-          document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+          bodyBg = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+          inputBg = 'rgba(80, 50, 120, 0.92)';
+        } else if (color.startsWith('gradient') || color.startsWith('linear-gradient')) {
+          bodyBg = color;
+          inputBg = 'rgba(20, 20, 30, 0.92)';
         } else {
-          document.body.style.background = color;
+          bodyBg = color;
+          // Rengi parse edip hafif transparan bir türev oluştur
+          try {
+            const r = parseInt(color.slice(1,3),16);
+            const g = parseInt(color.slice(3,5),16);
+            const b = parseInt(color.slice(5,7),16);
+            // Renk açıksa (luminans > 0.5) hafif koyulaştır, koyuysa aydınlat
+            const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
+            if (luminance > 0.6) {
+              // Açık renk → biraz beyaza çek
+              inputBg = `rgba(${Math.min(r+20,255)}, ${Math.min(g+20,255)}, ${Math.min(b+20,255)}, 0.96)`;
+            } else {
+              // Koyu renk → üstüne hafif siyah katman
+              inputBg = `rgba(${Math.max(r-10,0)}, ${Math.max(g-10,0)}, ${Math.max(b-10,0)}, 0.96)`;
+            }
+          } catch(e) {
+            inputBg = 'rgba(255,255,255,0.95)';
+          }
+        }
+        document.body.style.background = bodyBg;
+        // Input container'ı güncelle
+        const inputContainer = document.getElementById('message-input-container');
+        if (inputContainer) {
+          inputContainer.style.background = inputBg;
+          inputContainer.style.borderTopColor = 'rgba(128,128,128,0.2)';
         }
       }
 
@@ -16597,10 +16764,25 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         });
       }
 
+      // Yazı boyutunu uygula
+      function applyFontSize(size) {
+        if (!size) size = 'medium';
+        document.body.classList.remove('font-size-small', 'font-size-medium', 'font-size-large', 'font-size-xlarge');
+        document.body.classList.add('font-size-' + size);
+        // Aktif butonu işaretle
+        document.querySelectorAll('.font-size-btn').forEach(btn => {
+          const active = btn.dataset.size === size;
+          btn.style.borderColor = active ? '#8b5cf6' : 'transparent';
+          btn.style.background  = active ? 'rgba(139,92,246,0.12)' : '';
+        });
+      }
+
       function applyFullTheme() {
         applyBgColor(currentTheme.bgColor);
         applyBubbleStyles(currentTheme.userBubbleColor, currentTheme.bubbleShape);
         applyFontFamily(currentTheme.fontFamily || 'Inter');
+        applyFontSize(currentTheme.fontSize || 'medium');
+        window._jarvisSendEffect = currentTheme.sendEffect || 'particles';
       }
 
       // Önizleme güncelle
@@ -16649,6 +16831,18 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         });
       }
 
+      function markSelectedSendEffectBtn(activeEffect) {
+        document.querySelectorAll('.send-effect-btn').forEach(btn => {
+          if (btn.dataset.effect === activeEffect) {
+            btn.classList.add('border-purple-500');
+            btn.classList.remove('border-gray-200', 'dark:border-gray-600');
+          } else {
+            btn.classList.remove('border-purple-500');
+            btn.classList.add('border-gray-200');
+          }
+        });
+      }
+
       // Modal aç
       function openThemeEditor() {
         const modal = document.getElementById('theme-editor-modal');
@@ -16658,6 +16852,8 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
           markSelectedColorBtn(document.getElementById('bg-color-presets'), currentTheme.bgColor, 'bg');
           markSelectedColorBtn(document.getElementById('user-bubble-presets'), currentTheme.userBubbleColor, 'userColor');
           markSelectedShapeBtn(currentTheme.bubbleShape);
+          markSelectedSendEffectBtn(currentTheme.sendEffect || 'particles');
+          applyFontSize(currentTheme.fontSize || 'medium');
           // custom color picker değerini ayarla
           const customBg = document.getElementById('custom-bg-color');
           if (customBg && !currentTheme.bgColor.startsWith('gradient')) {
@@ -16774,6 +16970,28 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         // Sayfa açılışında aktif fontu işaretle
         applyFontFamily(currentTheme.fontFamily || 'Inter');
 
+        // Yazı boyutu butonları
+        document.querySelectorAll('.font-size-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            currentTheme.fontSize = btn.dataset.size;
+            applyFontSize(currentTheme.fontSize);
+          });
+        });
+        // Sayfa açılışında aktif yazı boyutunu işaretle
+        applyFontSize(currentTheme.fontSize || 'medium');
+
+        // Gönderme efekti butonları
+        document.querySelectorAll('.send-effect-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            currentTheme.sendEffect = btn.dataset.effect;
+            markSelectedSendEffectBtn(currentTheme.sendEffect);
+            // Global'e yay — createSendParticles fonksiyonu bunu kontrol eder
+            window._jarvisSendEffect = currentTheme.sendEffect;
+          });
+        });
+        // Sayfa açılışında uygula
+        window._jarvisSendEffect = currentTheme.sendEffect || 'particles';
+
         // Temayı Uygula
         const applyBtn = document.getElementById('apply-theme-btn');
         if (applyBtn) {
@@ -16792,17 +17010,25 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
               bgColor: '#f8fafc',
               userBubbleColor: 'gradient-default',
               bubbleShape: 'modern',
-              fontFamily: 'Inter'
+              fontFamily: 'Inter',
+              sendEffect: 'particles',
+              fontSize: 'medium'
             };
             // Override stilini temizle
             const styleEl = document.getElementById('jarvis-theme-override');
             if (styleEl) styleEl.remove();
             document.body.style.background = '';
+            // Input container'ı sıfırla
+            const inputCont = document.getElementById('message-input-container');
+            if (inputCont) { inputCont.style.background = ''; inputCont.style.borderTopColor = ''; }
+            // Yazı boyutunu sıfırla
+            applyFontSize('medium');
             localStorage.removeItem('jarvis_custom_theme');
             updatePreview();
             markSelectedColorBtn(document.getElementById('bg-color-presets'), currentTheme.bgColor, 'bg');
             markSelectedColorBtn(document.getElementById('user-bubble-presets'), currentTheme.userBubbleColor, 'userColor');
             markSelectedShapeBtn(currentTheme.bubbleShape);
+            markSelectedSendEffectBtn(currentTheme.sendEffect || 'particles');
             document.getElementById('bg-color-hex').textContent = currentTheme.bgColor;
             document.getElementById('user-color-hex').textContent = currentTheme.userBubbleColor;
             document.getElementById('custom-bg-color').value = currentTheme.bgColor;

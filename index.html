@@ -401,20 +401,6 @@
       opacity: 1;
     }
 
-    /* ── Yazı Boyutu Seviyeleri ── */
-    body.font-size-small  .message-content,
-    body.font-size-small  #chat-input { font-size: 13px !important; }
-    body.font-size-medium .message-content,
-    body.font-size-medium #chat-input { font-size: 15px !important; }
-    body.font-size-large  .message-content,
-    body.font-size-large  #chat-input { font-size: 17px !important; }
-    body.font-size-xlarge .message-content,
-    body.font-size-xlarge #chat-input { font-size: 20px !important; }
-
-    body.font-size-small  .message-bubble { padding: 8px 12px !important; }
-    body.font-size-large  .message-bubble { padding: 14px 18px !important; }
-    body.font-size-xlarge .message-bubble { padding: 16px 22px !important; }
-
     /* Bot mesaj link stili */
     .message-content a {
       color: #3b82f6;
@@ -1408,6 +1394,25 @@
         max-height: 100px;
         overflow-x: auto;
       }
+
+      /* Sohbet içi resim önizleme — ekrana sığma düzeltmesi */
+      .image-preview {
+        max-width: 100% !important;
+        width: 100% !important;
+        max-height: 200px !important;
+        object-fit: contain !important;
+        display: block !important;
+      }
+      .file-preview {
+        max-width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .message-bubble .message-content {
+        max-width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
       .image-question-input {
         font-size: 13px !important;
         padding: 6px !important;
@@ -1700,9 +1705,17 @@
 
     .image-preview {
       max-width: 100%;
-      max-height: 300px;
+      width: 100%;
+      max-height: 260px;
       object-fit: contain;
       border-radius: 8px;
+      display: block;
+    }
+
+    .file-preview {
+      max-width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
     }
 
     .maestro-btn, .voice-btn, .creative-btn {
@@ -2092,7 +2105,7 @@
     }
 
     /* ═══════════════════════════════════════
-       LIVE MOD — TAM OPTİMİZE UI v2
+       LIVE MOD — TAM OPTİMİZE UI v3
     ═══════════════════════════════════════ */
     #voice-live-screen {
       position: fixed;
@@ -2102,14 +2115,36 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(ellipse at center, #0d1117 0%, #0a0a0a 100%);
+      /* Derin, sinematik arka plan */
+      background:
+        radial-gradient(ellipse at 50% 35%, rgba(52,211,153,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(99,102,241,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 20%, rgba(96,165,250,0.05) 0%, transparent 50%),
+        linear-gradient(160deg, #070b14 0%, #0a0a0a 50%, #06070f 100%);
       color: white;
-      transition: opacity 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1);
+      transition: opacity 0.4s cubic-bezier(.4,0,.2,1), transform 0.4s cubic-bezier(.4,0,.2,1);
       opacity: 0;
-      transform: translateY(30px) scale(0.98);
+      transform: translateY(24px) scale(0.99);
       pointer-events: none;
       gap: 0;
+      overflow: hidden;
     }
+
+    /* Arka plan ızgara deseni */
+    #voice-live-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(52,211,153,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(52,211,153,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* İçerik z-index 1 üstünde */
+    #voice-live-screen > * { position: relative; z-index: 1; }
 
     #voice-live-screen.active {
       opacity: 1;
@@ -2117,8 +2152,6 @@
       pointer-events: all;
     }
 
-    /* #voice-live-screen display:flex, Tailwind .hidden'dan yüksek özgüllükte — kapalıyken yine flex kalıyordu;
-       translateY(30px) + şeffaflık üstte gövde rengi şeridi yaratıyordu (mobilde "boşluk"). */
     #voice-live-screen.hidden {
       display: none !important;
     }
@@ -2128,23 +2161,26 @@
       top: 24px;
       left: 24px;
       z-index: 10001;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: white;
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      border-radius: 14px;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-      backdrop-filter: blur(8px);
+      transition: background 0.2s, color 0.2s, transform 0.2s, border-color 0.2s;
+      backdrop-filter: blur(12px);
     }
     #voice-live-close:hover {
-      background: rgba(255,255,255,0.18);
+      background: rgba(239,68,68,0.18);
+      border-color: rgba(239,68,68,0.35);
+      color: #fca5a5;
       transform: scale(1.08);
     }
+    #voice-live-close:active { transform: scale(0.94); }
 
     /* Durum etiketi — üstte */
     #live-status-badge {
@@ -2155,54 +2191,64 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
       border-radius: 999px;
-      padding: 6px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.7);
-      backdrop-filter: blur(8px);
-      transition: all 0.3s;
+      padding: 7px 18px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.65);
+      backdrop-filter: blur(12px);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: all 0.35s cubic-bezier(.4,0,.2,1);
       white-space: nowrap;
     }
     #live-status-badge .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: #34d399;
-      transition: background 0.3s;
+      transition: background 0.3s, box-shadow 0.3s;
+      flex-shrink: 0;
     }
-    #live-status-badge.thinking .status-dot { background: #fbbf24; animation: pulseDot 1s infinite; }
-    #live-status-badge.speaking .status-dot { background: #60a5fa; animation: pulseDot 0.8s infinite; }
-    #live-status-badge.listening .status-dot { background: #34d399; animation: pulseDot 1.2s infinite; }
-    #live-status-badge.idle .status-dot { background: rgba(255,255,255,0.3); animation: none; }
+    #live-status-badge.thinking { border-color: rgba(251,191,36,0.25); color: rgba(253,230,138,0.8); }
+    #live-status-badge.speaking { border-color: rgba(96,165,250,0.25); color: rgba(147,197,253,0.8); }
+    #live-status-badge.listening { border-color: rgba(52,211,153,0.3); color: rgba(110,231,183,0.9); }
+    #live-status-badge.thinking .status-dot { background: #fbbf24; box-shadow: 0 0 8px rgba(251,191,36,0.6); animation: pulseDot 1s infinite; }
+    #live-status-badge.speaking .status-dot { background: #60a5fa; box-shadow: 0 0 8px rgba(96,165,250,0.6); animation: pulseDot 0.8s infinite; }
+    #live-status-badge.listening .status-dot { background: #34d399; box-shadow: 0 0 8px rgba(52,211,153,0.6); animation: pulseDot 1.2s infinite; }
+    #live-status-badge.idle .status-dot { background: rgba(255,255,255,0.25); box-shadow: none; animation: none; }
     @keyframes pulseDot {
       0%,100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.7); }
+      50% { opacity: 0.35; transform: scale(0.65); }
     }
 
     /* Orb / dalga — merkez */
     .live-orb-wrapper {
       position: relative;
-      width: 200px;
-      height: 200px;
+      width: 210px;
+      height: 210px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
+      filter: drop-shadow(0 0 32px rgba(52,211,153,0.12));
+      transition: filter 0.4s;
     }
 
     .live-orb {
-      width: 120px;
-      height: 120px;
+      width: 118px;
+      height: 118px;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #34d399, #059669);
-      box-shadow: 0 0 40px rgba(52,211,153,0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 40px rgba(52,211,153,0.28), inset 0 1px 0 rgba(255,255,255,0.15);
+      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s;
       position: relative;
       z-index: 2;
     }
+
+    .live-orb:hover { transform: scale(1.04); }
 
     .live-orb svg {
       position: absolute;
@@ -2211,37 +2257,38 @@
       transform: translate(-50%,-50%);
       width: 44px;
       height: 44px;
-      color: white;
+      color: rgba(255,255,255,0.92);
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
     }
 
     /* Dinleme halkası */
     .live-orb-ring {
       position: absolute;
       border-radius: 50%;
-      border: 2px solid rgba(52,211,153,0.3);
-      animation: ringPulse 2s ease-out infinite;
+      border: 1.5px solid rgba(52,211,153,0.22);
+      animation: ringPulse 2.4s ease-out infinite;
       pointer-events: none;
     }
     .live-orb-ring:nth-child(1) { width: 150px; height: 150px; animation-delay: 0s; }
-    .live-orb-ring:nth-child(2) { width: 175px; height: 175px; animation-delay: 0.5s; }
-    .live-orb-ring:nth-child(3) { width: 200px; height: 200px; animation-delay: 1s; }
+    .live-orb-ring:nth-child(2) { width: 178px; height: 178px; animation-delay: 0.7s; }
+    .live-orb-ring:nth-child(3) { width: 210px; height: 210px; animation-delay: 1.4s; }
     @keyframes ringPulse {
-      0%   { opacity: 0.6; transform: scale(0.85); }
-      100% { opacity: 0;   transform: scale(1.1); }
+      0%   { opacity: 0.55; transform: scale(0.88); }
+      100% { opacity: 0;    transform: scale(1.06); }
     }
 
     /* Düşünüyor halkası */
     .live-orb-ring.thinking-ring {
-      border-color: rgba(251,191,36,0.4);
-      animation: thinkingRing 1.2s linear infinite;
+      border-color: rgba(251,191,36,0.35);
+      animation: thinkingRing 1.3s linear infinite;
     }
     @keyframes thinkingRing {
-      0%   { transform: rotate(0deg) scale(1); opacity: 0.7; }
-      50%  { transform: rotate(180deg) scale(1.05); opacity: 0.4; }
-      100% { transform: rotate(360deg) scale(1); opacity: 0.7; }
+      0%   { transform: rotate(0deg) scale(1); opacity: 0.65; }
+      50%  { transform: rotate(180deg) scale(1.04); opacity: 0.35; }
+      100% { transform: rotate(360deg) scale(1); opacity: 0.65; }
     }
 
-    /* ── Konuşuyor dalgası — orb ALTINDA, tam genişlikte ── */
+    /* ── Konuşuyor dalgası — orb ALTINDA ── */
     .voice-wave {
       display: flex;
       align-items: center;
@@ -2251,19 +2298,18 @@
       width: 220px;
       position: static;
       transform: none;
-      margin-top: 18px;
+      margin-top: 16px;
     }
     .voice-wave-bar {
-      width: 6px;
-      border-radius: 4px;
+      width: 5px;
+      border-radius: 3px;
       background: linear-gradient(to top, #2563eb, #93c5fd);
       animation: waveBar 0.85s ease-in-out infinite;
-      height: 6px;
+      height: 5px;
       transform-origin: center;
       flex-shrink: 0;
       transition: height 0.06s ease-out, opacity 0.06s ease-out;
     }
-    /* Ortadan kenara doğru simetrik gecikme — doğal ses dalgası görünümü */
     .voice-wave-bar:nth-child(1)  { animation-delay: 0.40s; }
     .voice-wave-bar:nth-child(2)  { animation-delay: 0.30s; }
     .voice-wave-bar:nth-child(3)  { animation-delay: 0.20s; }
@@ -2275,65 +2321,65 @@
     .voice-wave-bar:nth-child(9)  { animation-delay: 0.20s; }
     .voice-wave-bar:nth-child(10) { animation-delay: 0.30s; }
     @keyframes waveBar {
-      0%,100% { height: 5px;  opacity: 0.5; }
-      25%      { height: 28px; opacity: 1;   }
-      50%      { height: 50px; opacity: 1;   }
-      75%      { height: 28px; opacity: 1;   }
+      0%,100% { height: 4px;  opacity: 0.4; }
+      25%      { height: 26px; opacity: 0.9; }
+      50%      { height: 48px; opacity: 1;   }
+      75%      { height: 26px; opacity: 0.9; }
     }
 
-    /* Orb renk durumları */
-    #voice-live-screen.state-listening  .live-orb { background: radial-gradient(circle at 35% 35%, #34d399, #059669); box-shadow: 0 0 50px rgba(52,211,153,0.4); }
-    #voice-live-screen.state-thinking   .live-orb { background: radial-gradient(circle at 35% 35%, #fcd34d, #d97706); box-shadow: 0 0 50px rgba(251,191,36,0.4); }
-    #voice-live-screen.state-speaking   .live-orb { background: radial-gradient(circle at 35% 35%, #93c5fd, #2563eb); box-shadow: 0 0 50px rgba(96,165,250,0.4); }
-    #voice-live-screen.state-idle       .live-orb { background: radial-gradient(circle at 35% 35%, #9ca3af, #4b5563); box-shadow: 0 0 20px rgba(156,163,175,0.2); }
+    /* Orb renk + wrapper gölge durumları */
+    #voice-live-screen.state-listening  .live-orb { background: radial-gradient(circle at 35% 35%, #34d399, #059669); box-shadow: 0 0 52px rgba(52,211,153,0.38), inset 0 1px 0 rgba(255,255,255,0.18); }
+    #voice-live-screen.state-listening  .live-orb-wrapper { filter: drop-shadow(0 0 36px rgba(52,211,153,0.18)); }
+    #voice-live-screen.state-thinking   .live-orb { background: radial-gradient(circle at 35% 35%, #fcd34d, #d97706); box-shadow: 0 0 52px rgba(251,191,36,0.38), inset 0 1px 0 rgba(255,255,255,0.18); }
+    #voice-live-screen.state-thinking   .live-orb-wrapper { filter: drop-shadow(0 0 36px rgba(251,191,36,0.18)); }
+    #voice-live-screen.state-speaking   .live-orb { background: radial-gradient(circle at 35% 35%, #93c5fd, #2563eb); box-shadow: 0 0 52px rgba(96,165,250,0.38), inset 0 1px 0 rgba(255,255,255,0.18); }
+    #voice-live-screen.state-speaking   .live-orb-wrapper { filter: drop-shadow(0 0 36px rgba(96,165,250,0.18)); }
+    #voice-live-screen.state-idle       .live-orb { background: radial-gradient(circle at 35% 35%, #9ca3af, #374151); box-shadow: 0 0 20px rgba(156,163,175,0.15), inset 0 1px 0 rgba(255,255,255,0.08); }
+    #voice-live-screen.state-idle       .live-orb-wrapper { filter: drop-shadow(0 0 16px rgba(156,163,175,0.08)); }
 
-    /* Transcript alanı */
+    /* Transcript alanı — glassmorphism */
     #live-transcript {
-      width: min(600px, 90vw);
-      min-height: 80px;
-      max-height: 200px;
+      width: min(600px, 88vw);
+      min-height: 72px;
+      max-height: 190px;
       overflow-y: auto;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 18px;
-      padding: 16px 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 16px 24px;
       font-size: 1rem;
-      line-height: 1.6;
-      color: rgba(255,255,255,0.85);
+      line-height: 1.65;
+      color: rgba(255,255,255,0.82);
       text-align: center;
-      backdrop-filter: blur(8px);
-      transition: all 0.3s;
+      backdrop-filter: blur(20px);
+      transition: border-color 0.3s, background 0.3s;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.2) transparent;
+      scrollbar-color: rgba(255,255,255,0.15) transparent;
+      word-break: break-word;
     }
     #live-transcript.user-speaking {
-      border-color: rgba(52,211,153,0.4);
-      background: rgba(52,211,153,0.07);
+      border-color: rgba(52,211,153,0.35);
+      background: rgba(52,211,153,0.06);
+      color: rgba(167,243,208,0.92);
     }
     #live-transcript.ai-responding {
-      border-color: rgba(96,165,250,0.4);
-      background: rgba(96,165,250,0.07);
+      border-color: rgba(96,165,250,0.35);
+      background: rgba(96,165,250,0.06);
+      color: rgba(186,230,253,0.92);
     }
     #live-transcript:empty::before {
       content: 'Konuşun, Jarvis dinliyor...';
-      color: rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.22);
       font-style: italic;
+      font-size: 0.9rem;
     }
 
     #voice-live-instruction {
-      margin-top: 20px;
-      color: rgba(255,255,255,0.4);
-      font-size: 0.85rem;
+      margin-top: 18px;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.8rem;
       text-align: center;
-    }
-
-    /* Caption panel kaldırıldı — transcript ile birleştirildi */
-    #live-caption-panel { display: none !important; }
-
-    @keyframes pulse {
-      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); }
-      70%  { box-shadow: 0 0 0 15px rgba(239,68,68,0); }
-      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+      letter-spacing: 0.02em;
     }
 
     /* ═══════════════════════════════════════════════
@@ -2347,45 +2393,46 @@
       #voice-live-close {
         top: calc(16px + env(safe-area-inset-top, 0px));
         left: 16px;
-        width: 48px; height: 48px;
-        min-width: 48px; min-height: 48px;
+        width: 42px; height: 42px;
+        border-radius: 12px;
+        min-width: 42px; min-height: 42px;
       }
       #live-status-badge {
         top: calc(22px + env(safe-area-inset-top, 0px));
-        font-size: 12px; padding: 5px 14px;
+        font-size: 11.5px; padding: 5px 13px;
       }
-      .live-orb-wrapper { width: 150px; height: 150px; margin-bottom: 20px; }
-      .live-orb         { width: 90px;  height: 90px; }
-      .live-orb svg     { width: 36px;  height: 36px; }
-      .live-orb-ring:nth-child(1) { width: 110px; height: 110px; }
-      .live-orb-ring:nth-child(2) { width: 130px; height: 130px; }
-      .live-orb-ring:nth-child(3) { width: 150px; height: 150px; }
-      .voice-wave       { width: min(260px, 85vw); height: 48px; gap: 4px; margin-top: 12px; }
-      .voice-wave-bar   { width: 5px; border-radius: 3px; }
+      .live-orb-wrapper { width: 148px; height: 148px; margin-bottom: 18px; }
+      .live-orb         { width: 88px;  height: 88px; }
+      .live-orb svg     { width: 34px;  height: 34px; }
+      .live-orb-ring:nth-child(1) { width: 108px; height: 108px; }
+      .live-orb-ring:nth-child(2) { width: 128px; height: 128px; }
+      .live-orb-ring:nth-child(3) { width: 148px; height: 148px; }
+      .voice-wave       { width: min(260px, 85vw); height: 46px; gap: 4px; margin-top: 10px; }
+      .voice-wave-bar   { width: 4px; border-radius: 2px; }
       #live-transcript  {
-        width: min(92vw, 500px); max-height: 140px;
-        font-size: 0.88rem; padding: 12px 16px;
-        line-height: 1.5; border-radius: 14px;
+        width: min(92vw, 500px); max-height: 135px;
+        font-size: 0.87rem; padding: 11px 15px;
+        line-height: 1.5; border-radius: 16px;
       }
-      #voice-live-instruction { margin-top: 14px; font-size: 0.78rem; padding: 0 16px; }
+      #voice-live-instruction { margin-top: 12px; font-size: 0.76rem; padding: 0 16px; }
     }
 
     /* Çok küçük ekranlar (iPhone SE vb.) */
     @media (max-width: 380px) {
-      .live-orb-wrapper { width: 130px; height: 130px; margin-bottom: 14px; }
-      .live-orb         { width: 78px;  height: 78px; }
-      .live-orb-ring:nth-child(1) { width: 96px;  height: 96px; }
-      .live-orb-ring:nth-child(2) { width: 113px; height: 113px; }
-      .live-orb-ring:nth-child(3) { width: 130px; height: 130px; }
-      .voice-wave       { width: min(220px, 80vw); height: 42px; }
-      #live-transcript  { font-size: 0.83rem; max-height: 110px; }
+      .live-orb-wrapper { width: 128px; height: 128px; margin-bottom: 12px; }
+      .live-orb         { width: 76px;  height: 76px; }
+      .live-orb-ring:nth-child(1) { width: 94px;  height: 94px; }
+      .live-orb-ring:nth-child(2) { width: 111px; height: 111px; }
+      .live-orb-ring:nth-child(3) { width: 128px; height: 128px; }
+      .voice-wave       { width: min(220px, 80vw); height: 40px; }
+      #live-transcript  { font-size: 0.82rem; max-height: 105px; }
     }
 
     /* Yatay mod */
     @media (max-width: 768px) and (orientation: landscape) {
       #voice-live-screen {
         flex-direction: row; flex-wrap: wrap;
-        align-content: center; gap: 0 32px;
+        align-content: center; gap: 0 28px;
       }
       #live-status-badge {
         position: static; transform: none;
@@ -2393,13 +2440,13 @@
         width: 100%; justify-content: center;
         display: flex;
       }
-      .live-orb-wrapper  { width: 110px; height: 110px; margin-bottom: 0; }
-      .live-orb          { width: 70px;  height: 70px; }
-      .live-orb-ring:nth-child(1) { width: 86px;  height: 86px; }
-      .live-orb-ring:nth-child(2) { width: 98px;  height: 98px; }
-      .live-orb-ring:nth-child(3) { width: 110px; height: 110px; }
-      .voice-wave        { width: 170px; height: 40px; margin-top: 8px; }
-      #live-transcript   { width: min(340px, 48vw); max-height: 90px; font-size: 0.82rem; }
+      .live-orb-wrapper  { width: 108px; height: 108px; margin-bottom: 0; }
+      .live-orb          { width: 68px;  height: 68px; }
+      .live-orb-ring:nth-child(1) { width: 84px;  height: 84px; }
+      .live-orb-ring:nth-child(2) { width: 96px;  height: 96px; }
+      .live-orb-ring:nth-child(3) { width: 108px; height: 108px; }
+      .voice-wave        { width: 165px; height: 38px; margin-top: 6px; }
+      #live-transcript   { width: min(340px, 48vw); max-height: 88px; font-size: 0.81rem; }
       #voice-live-close  { top: 12px; left: 12px; }
       #voice-live-instruction { display: none; }
     }
@@ -3321,13 +3368,13 @@
     </div>
   </div>
 
-  <!-- Live Mod Ekranı — Optimize v2 -->
+  <!-- Live Mod Ekranı — Optimize v3 -->
   <div id="voice-live-screen" class="hidden">
 
     <!-- Kapat butonu -->
     <button id="voice-live-close" aria-label="Live Modu Kapat">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/>
       </svg>
     </button>
 
@@ -3366,10 +3413,7 @@
     <div id="live-transcript"></div>
 
     <div id="voice-live-instruction">
-      Konuşun — Jarvis dinliyor &nbsp;·&nbsp; Kapatmak için ✕
-      <span class="block mt-3" style="font-size:0.72rem; color:rgba(255,255,255,0.28); line-height:1.5;">
-        🌐 Live mod şu an internet araması yapmıyor — güncel bilgi veremeyebilir.<br>Zamanla eklenecektir.
-      </span>
+      Konuşun &nbsp;·&nbsp; Jarvis dinliyor &nbsp;·&nbsp; ✕ kapatır
     </div>
   </div>
 
@@ -4815,7 +4859,10 @@
   <div id="memory-modal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-dark-sidebar rounded-lg shadow-xl w-full max-w-2xl overflow-hidden">
       <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-dark-border">
-        <h3 class="text-lg font-semibold dark:text-dark-text">Bellek</h3>
+        <div class="flex items-center gap-2">
+          <span style="font-size:1.2rem;">🧠</span>
+          <h3 class="text-lg font-semibold dark:text-dark-text">Bellek</h3>
+        </div>
         <button id="close-memory-modal" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -4823,17 +4870,49 @@
         </button>
       </div>
       <div class="p-6">
-        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-          Aşağıya, Jarvis'in sizin hakkınızda bilmesini istediğiniz bilgileri yazabilirsiniz. 
-          Bu bilgiler tüm konuşmalarınızda Jarvis tarafından kullanılacaktır.
-        </p>
-        <textarea id="memory-textarea" class="w-full h-64 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200" placeholder="Örneğin: Adım Ahmet, 25 yaşındayım, yazılım geliştiriciyim, kahve severim, müzik dinlemeyi ve kitap okumayı seviyorum..."></textarea>
-        <div class="flex justify-end space-x-3 mt-4">
-          <button id="clear-memory" class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
-            Belleği Temizle
+
+        <!-- Otomatik Bellek Toggle -->
+        <div class="flex items-center justify-between mb-5 p-3 rounded-xl" style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);">
+          <div>
+            <div class="font-semibold text-sm dark:text-dark-text" style="color:#065f46;">⚡ Otomatik Bellek</div>
+            <div class="text-xs mt-0.5" style="color:#6b7280;">Konuşurken senden öğrendiği bilgileri otomatik kaydeder</div>
+          </div>
+          <!-- Toggle Switch -->
+          <button id="auto-memory-toggle" onclick="toggleAutoMemory()" 
+            class="relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none"
+            style="background:#34d399;"
+            aria-label="Otomatik bellek aç/kapat">
+            <span id="auto-memory-knob" 
+              class="inline-block w-5 h-5 bg-white rounded-full shadow transition-transform duration-300"
+              style="transform:translateX(26px);"></span>
           </button>
-          <button id="save-memory" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition">
-            Kaydet
+        </div>
+
+        <!-- Otomatik öğrenilen bilgiler etiketi -->
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wide" style="color:#6b7280;">Hakkında Bilinen Bilgiler</span>
+          <span id="memory-auto-badge" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:rgba(52,211,153,0.15);color:#065f46;display:none;">Otomatik eklendi</span>
+        </div>
+
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+          Jarvis'in her konuşmada seni tanıması için bilgi ekleyebilir ya da doğrudan düzenleyebilirsin. Otomatik mod açıkken konuşmalardan öğrendiği bilgileri buraya ekler.
+        </p>
+
+        <!-- Gizlilik notu -->
+        <div class="flex items-start gap-2 mb-3 px-3 py-2 rounded-lg" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.15);">
+          <span style="font-size:0.95rem;margin-top:1px;">🔒</span>
+          <p class="text-xs" style="color:#6366f1;line-height:1.5;">
+            <strong>Veriler yalnızca cihazında saklanır.</strong> Bu bilgiler tarayıcının yerel depolama alanında (localStorage) tutulur; hiçbir sunucuya gönderilmez, Jarvis dışında kimse erişemez.
+          </p>
+        </div>
+        <textarea id="memory-textarea" class="w-full h-56 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm" placeholder="Örneğin: Adım Ahmet, 25 yaşındayım, yazılım geliştiriciyim. Kahve severim, İstanbul'da yaşıyorum."></textarea>
+        
+        <div class="flex justify-between items-center mt-4">
+          <button id="clear-memory" class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition text-sm">
+            🗑️ Belleği Temizle
+          </button>
+          <button id="save-memory" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition text-sm font-medium">
+            💾 Kaydet
           </button>
         </div>
       </div>
@@ -4961,29 +5040,6 @@
           </div>
         </div>
 
-        <!-- Yazı Boyutu -->
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">🔡 Yazı Boyutu</label>
-          <div class="grid grid-cols-4 gap-2" id="font-size-presets">
-            <button class="font-size-btn py-2.5 border-2 border-transparent rounded-xl text-center hover:border-purple-400 transition bg-gray-50 dark:bg-gray-800" data-size="small">
-              <span class="block text-xs font-bold text-gray-700 dark:text-gray-200" style="font-size:11px;">Aa</span>
-              <span class="block text-xs text-gray-400 mt-0.5" style="font-size:10px;">Küçük</span>
-            </button>
-            <button class="font-size-btn py-2.5 border-2 border-transparent rounded-xl text-center hover:border-purple-400 transition bg-gray-50 dark:bg-gray-800" data-size="medium">
-              <span class="block font-bold text-gray-700 dark:text-gray-200" style="font-size:13px;">Aa</span>
-              <span class="block text-xs text-gray-400 mt-0.5" style="font-size:10px;">Orta</span>
-            </button>
-            <button class="font-size-btn py-2.5 border-2 border-transparent rounded-xl text-center hover:border-purple-400 transition bg-gray-50 dark:bg-gray-800" data-size="large">
-              <span class="block font-bold text-gray-700 dark:text-gray-200" style="font-size:16px;">Aa</span>
-              <span class="block text-xs text-gray-400 mt-0.5" style="font-size:10px;">Büyük</span>
-            </button>
-            <button class="font-size-btn py-2.5 border-2 border-transparent rounded-xl text-center hover:border-purple-400 transition bg-gray-50 dark:bg-gray-800" data-size="xlarge">
-              <span class="block font-bold text-gray-700 dark:text-gray-200" style="font-size:20px;">Aa</span>
-              <span class="block text-xs text-gray-400 mt-0.5" style="font-size:10px;">Ekstra</span>
-            </button>
-          </div>
-        </div>
-
         <!-- Mesaj Balonu Şekli -->
         <div>
           <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">🔵 Mesaj Balonu Şekli</label>
@@ -5034,6 +5090,29 @@
                 <div class="h-7 flex-1 bg-gray-300" style="border-radius:50px;"></div>
               </div>
               <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Hap Şekli</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Yazı Büyüklüğü -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">🔡 Yazı Büyüklüğü</label>
+          <div class="grid grid-cols-4 gap-2" id="font-size-presets">
+            <button class="font-size-btn px-3 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-purple-400 transition flex flex-col items-center gap-1" data-size="small">
+              <span style="font-size:0.78rem;font-weight:600;" class="text-gray-700 dark:text-gray-200">Aa</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">Küçük</span>
+            </button>
+            <button class="font-size-btn px-3 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-purple-400 transition flex flex-col items-center gap-1" data-size="normal">
+              <span style="font-size:0.95rem;font-weight:600;" class="text-gray-700 dark:text-gray-200">Aa</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">Normal</span>
+            </button>
+            <button class="font-size-btn px-3 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-purple-400 transition flex flex-col items-center gap-1" data-size="large">
+              <span style="font-size:1.15rem;font-weight:600;" class="text-gray-700 dark:text-gray-200">Aa</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">Büyük</span>
+            </button>
+            <button class="font-size-btn px-3 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-purple-400 transition flex flex-col items-center gap-1" data-size="xlarge">
+              <span style="font-size:1.35rem;font-weight:600;" class="text-gray-700 dark:text-gray-200">Aa</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">Çok Büyük</span>
             </button>
           </div>
         </div>
@@ -5391,8 +5470,8 @@
       animation: spin 0.7s linear infinite;
     }
   </style>
-  <div id="image-gen-modal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-dark-sidebar rounded-lg shadow-xl w-full max-w-2xl overflow-hidden">
+  <div id="image-gen-modal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 hidden" style="align-items:center;">
+    <div class="bg-white dark:bg-dark-sidebar rounded-lg shadow-xl w-full overflow-hidden" style="max-width:min(700px,95vw);max-height:92dvh;max-height:92vh;display:flex;flex-direction:column;">
       <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-dark-border">
         <h3 class="text-lg font-semibold dark:text-dark-text flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -5406,7 +5485,7 @@
           </svg>
         </button>
       </div>
-      <div class="p-6">
+      <div class="p-4 overflow-y-auto" style="flex:1;min-height:0;">
         <div id="image-gen-input-section">
           <textarea id="image-gen-prompt" class="w-full h-40 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200" placeholder="Çizmek istediğiniz resmi ayrıntılı bir şekilde tanımlayın..."></textarea>
           
@@ -5440,7 +5519,7 @@
         </div>
         
         <div id="image-gen-result-section" class="hidden">
-          <img id="image-gen-result-img" class="w-full h-auto rounded-lg mb-4" alt="Oluşturulan Resim">
+          <img id="image-gen-result-img" class="w-full rounded-lg mb-4" alt="Oluşturulan Resim" style="max-height:50vh;object-fit:contain;display:block;margin:0 auto;">
           <div class="flex gap-3">
             <a id="image-gen-download" class="flex-1 px-4 py-2 bg-green-500 text-white text-center rounded-lg hover:bg-green-600 transition" download="jarvis-resim.png">İndir</a>
             <button id="image-gen-new" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Yeni Resim</button>
@@ -6928,7 +7007,22 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
 
     function isComparisonQuery(query) {
       const lower = query.toLowerCase();
-      return lower.includes(' mı ') || lower.includes(' mi ') || lower.includes(' karşılaştır') || lower.includes(' vs ') || lower.includes(' veya ');
+      const basicSignals = lower.includes(' mı ') || lower.includes(' mi ') ||
+             lower.includes('karşılaştır') || lower.includes('kıyasla') ||
+             lower.includes(' vs ') || lower.includes(' veya ') ||
+             lower.includes('farkı ne') || lower.includes('hangisi daha') ||
+             lower.includes('arasındaki fark') || /\bvs\b/i.test(lower);
+      if (basicSignals) return true;
+
+      // "X mi Y mi almalıyım?" / "X mi Y mi alsam?" → karşılaştırma
+      const hasBuy = /\b(alsam\s*mı|almalı\s*mıyım|alayım\s*mı|hangisini\s*(alsam|almalıyım|alayım|tercih))\b/.test(lower);
+      if (hasBuy) {
+        const productCount = (lower.match(
+          /\b(iphone|galaxy|pixel|xiaomi|huawei|oneplus|oppo|realme|motorola|redmi|poco|xperia|nothing|honor|samsung|apple|google|sony|asus|macbook|thinkpad|surface|rtx|rx|gtx|radeon|ryzen|playstation|ps[45]|xbox|nintendo|s\s?\d{1,2}\s*(?:ultra|plus|fe)?|note\s?\d{1,2}|z\s?(?:fold|flip)\s?\d|pixel\s?\d+)\b/gi
+        ) || []).length;
+        if (productCount >= 2) return true;
+      }
+      return false;
     }
 
     // Şikayet / zayıf yön sorgularında otomatik query zenginleştirme
@@ -7077,8 +7171,11 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
       const isFinanceQuery   = /dolar|euro|altın|borsa|bitcoin|kripto|kur|sterlin|fiyat|token|api\s*fiyat|pricing/.test(lower);
       const isLocalQuery     = /nerede|kafe|restoran|otel|eczane|market|berber/.test(lower);
       const isTechQuery      = /yapay zeka|ai|openai|google|nvidia|apple|microsoft|model|teknoloji/.test(lower);
-      // Şikayet / zayıf yön sorgusu tespiti
       const isComplaintQuery = /şikayet|zayıf\s*yön|olumsuz|sorun|problem|hata|kötü|berbat|memnun\s*değil|mağdur|dolandır|rezalet|uyarı|tehlike/.test(lower);
+      // Firmware / yazılım güncelleme sorgusu tespiti
+      const isFirmwareQuery  =
+        /\b(güncelleme|update|firmware|yazılım|versiyon|sürüm|patch|one\s*ui|miui|ios|android)\b/.test(lower) &&
+        /\b(aldı|alıyor|alacak|aldı\s*mı|alır\s*mı|hangi|son|en\s*son|latest|mevcut|çıktı\s*mı|geldi\s*mi)\b/.test(lower);
 
       // Tech/AI sorguları için İngilizce arama terimi de ekle — daha iyi uluslararası kaynaklar için
       let enrichedQuery = query;
@@ -7098,6 +7195,30 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
       if (isComplaintQuery && !/şikayet/.test(lower)) {
         enrichedQuery += ' şikayet';
       }
+      // Firmware/güncelleme sorgularında İngilizce teknik terim ekle
+      if (isFirmwareQuery) {
+        if (!/update|firmware|latest\s*version/.test(lower)) {
+          enrichedQuery = enrichedQuery
+            .replace(/\bGüncelleme\b/gi, 'software update')
+            .replace(/\bgüncelleme\b/gi, 'software update')
+            .replace(/\ben\s*son\b/gi, 'latest')
+            .replace(/\bhangi\s*güncellemeyi\s*aldı\b/gi, 'latest software update')
+            .replace(/\bgüncelleme\s*aldı\b/gi, 'received update');
+        }
+        // Samsung cihazları için özel enrichment
+        if (/samsung/.test(lower)) {
+          enrichedQuery += ' sammobile android update';
+        }
+        // Apple cihazları için
+        if (/iphone|ipad|apple\s*watch/.test(lower)) {
+          enrichedQuery += ' iOS update version';
+        }
+        // Xiaomi için
+        if (/xiaomi|redmi|poco|miui|hyperos/.test(lower)) {
+          enrichedQuery += ' MIUI HyperOS update';
+        }
+        console.log('[JARVIS] Firmware sorgusu zenginleştirildi:', enrichedQuery);
+      }
 
       try {
         const response = await fetch(url, {
@@ -7111,10 +7232,10 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
             search_depth: 'basic', // 'advanced' yerine 'basic' → ~2-3x daha hızlı
             include_answer: true,
             include_raw_content: false, // Ham içerik kapatıldı → payload küçüldü, hızlı yanıt
-            max_results: 7, // Azaltıldı → daha hızlı API yanıtı
+            max_results: isFirmwareQuery ? 10 : 7, // Firmware aramalarında daha fazla sonuç
             include_images: false,
             include_image_descriptions: false,
-            ...(isNewsQuery ? { days: 3 } : isFinanceQuery ? { days: 7 } : isTechQuery ? { days: 30 } : {}),
+            ...(isNewsQuery ? { days: 3 } : isFinanceQuery ? { days: 7 } : isFirmwareQuery ? { days: 90 } : isTechQuery ? { days: 30 } : {}),
             // Şikayet sorularında Türk şikayet/forum sitelerini önceliklendir
             ...(isComplaintQuery ? {
               include_domains: [
@@ -7129,14 +7250,46 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
                 'technopat.net',
                 'reddit.com'
               ]
+            } : isFirmwareQuery ? {
+              // Firmware/güncelleme sorularında uzman teknoloji sitelerini önceliklendir
+              include_domains: [
+                'sammobile.com',        // Samsung güncelleme takip
+                'gsmarena.com',         // Cihaz özellikleri ve güncelleme geçmişi
+                'androidauthority.com', // Android güncellemeleri
+                'xda-developers.com',   // Cihaz bazlı forum
+                'technopat.net',        // Türkçe teknoloji
+                'donanimhaber.com',     // Türkçe teknoloji
+                'samsung.com',          // Samsung resmi
+                'apple.com',            // Apple resmi
+                'mi.com',               // Xiaomi resmi
+                'android.googleblog.com'
+              ]
             } : {})
           })
         });
 
-        if (!response.ok) throw new Error(`Tavily API hatası: ${response.status}`);
+        if (!response.ok) {
+          // ── Hata tipini ayrıştır — kullanıcıya daha anlamlı bilgi ver ──
+          const status = response.status;
+          if (status === 401 || status === 403) {
+            console.error('[JARVIS] Tavily API Key geçersiz veya süresi dolmuş:', status);
+            return { error: 'api_key', results: null };
+          } else if (status === 429) {
+            console.error('[JARVIS] Tavily rate limit aşıldı:', status);
+            return { error: 'rate_limit', results: null };
+          } else if (status >= 500) {
+            console.error('[JARVIS] Tavily sunucu hatası:', status);
+            return { error: 'server_error', results: null };
+          } else {
+            console.error('[JARVIS] Tavily bilinmeyen hata:', status);
+            return { error: 'unknown', results: null };
+          }
+        }
 
         const data = await response.json();
-        if (!data.results || data.results.length === 0) return null;
+        if (!data.results || data.results.length === 0) {
+          return { error: 'no_results', results: null };
+        }
 
         // ── Domain çeşitliliği: aynı siteden MAX 2 sonuç ──────────────
         const seenDomains = new Map();
@@ -7169,10 +7322,60 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
           publishedDate: r.published_date || null
         }));
 
-        return mapped;
+        // ── Firmware sorgusu az sonuç döndürdüyse İngilizce retry ──────
+        // GSMArena, SamMobile gibi siteler İngilizce sorguda çok daha iyi sonuç verir.
+        if (isFirmwareQuery && mapped.length < 3) {
+          const enQuery = enrichedQuery
+            .replace(/güncelleme/gi, 'software update')
+            .replace(/en son/gi, 'latest')
+            .replace(/hangi/gi, 'which')
+            .replace(/aldı/gi, 'received')
+            .replace(/alacak mı/gi, 'will receive');
+          console.log('[JARVIS] Firmware: az sonuç, İngilizce retry:', enQuery);
+          try {
+            const retryResp = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+              body: JSON.stringify({
+                query: enQuery,
+                search_depth: 'basic',
+                include_answer: true,
+                include_raw_content: false,
+                max_results: 10,
+                include_images: false,
+                include_domains: ['sammobile.com','gsmarena.com','androidauthority.com','xda-developers.com','techradar.com','theverge.com']
+              })
+            });
+            if (retryResp.ok) {
+              const retryData = await retryResp.json();
+              const retryMapped = (retryData.results || [])
+                .filter(r => r.content && r.content.length >= 50)
+                .slice(0, 8)
+                .map(r => ({
+                  title: r.title || 'Başlık yok',
+                  snippet: r.content ? r.content.substring(0, 2000) : '',
+                  url: r.url,
+                  source: extractDomain(r.url),
+                  score: r.score || 0,
+                  publishedDate: r.published_date || null
+                }));
+              // İki kaynağı birleştir, URL tekrarını önle
+              const seenRetry = new Set(mapped.map(r => r.url));
+              const combined = [...mapped, ...retryMapped.filter(r => !seenRetry.has(r.url))];
+              console.log('[JARVIS] Firmware retry: toplam sonuç:', combined.length);
+              return { error: null, results: combined };
+            }
+          } catch (retryErr) {
+            console.warn('[JARVIS] Firmware retry başarısız:', retryErr.message);
+          }
+        }
+
+        return { error: null, results: mapped };
       } catch (error) {
-        console.error('Tavily arama hatası:', error);
-        return null;
+        // Timeout veya network hatası
+        const isTimeout = error.name === 'AbortError' || error.message?.includes('timeout');
+        console.error('[JARVIS] Tavily arama hatası:', error.message || error);
+        return { error: isTimeout ? 'timeout' : 'network', results: null };
       }
     }
 
@@ -7322,6 +7525,134 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
       const lower = query.toLowerCase().trim();
       const words = lower.split(/\s+/).filter(w => w.length > 1);
 
+      // ── ERKEN ÇIKIŞ: Metin düzenleme / meta-talimat mesajları ──────
+      // Kullanıcı modeli yönlendiriyor veya metin düzenleme istiyor → arama yapma
+      const isTextEditInstruction =
+        // "şu metni değiştir", "bunu şununla değiştir/düzelt/güncelle"
+        (/\b(değiştir|düzelt|düzenle|güncelle|yeniden\s*yaz|tekrar\s*yaz|kaldır|ekle|sil|çıkar)\b/.test(lower) &&
+         /\b(metni?|paragraf|cümle?|kelime|başlık|içerik|bölüm|şu\s*kısmı?|bunu|şunu|aşağıdaki|yukarıdaki|yerine|şununla|bununla)\b/.test(lower)) ||
+        // "anahtar kelime", "sistem prompt", "model ayarı" türü meta-komutlar
+        /\b(anahtar\s*kelime|sistem\s*prompt|model\s*ayar|sistem\s*mesaj|context\s*güncelle|bağlam\s*ekle)\b/.test(lower) ||
+        // "bak metni sen düzenleyecek misin" türü editöryal yönlendirmeler
+        /\b(sen\s*(düzenle|yaz|değiştir|güncelle|kontrol\s*et)|metni?\s*(sen|bak|şunu|bunu))\b/.test(lower);
+      if (isTextEditInstruction) return false;
+
+      // ── ERKEN ÇIKIŞ: Çeviri komutları → AI direkt çevirir, internete gitme ──
+      const isTranslationCommand =
+        /\b(ingilizcey[ae]|türkçey[ae]|almancay[ae]|fransızcay[ae]|ispanyolcay[ae]|rusçay[ae]|arapçay[ae]|japonca[ya]e?|çinceye?|koreceye?)\s*(çevir|translate|dönüştür|çevirir\s*misin|çevirebilir\s*misin)\b/i.test(lower) ||
+        /\b(translate\s*(this|it|to)|bunu\s*\w+ceye?\s*çevir|şunu\s*\w+ceye?\s*çevir)\b/i.test(lower) ||
+        (/\b(çevir|çevirir\s*misin|çevirebilir\s*misin|translate)\b/i.test(lower) &&
+         /\b(ingilizce|türkçe|almanca|fransızca|ispanyolca|rusça|arapça|japonca|çince|korece|italyanca|portekizce|lehçe|hollandaca)\b/i.test(lower));
+      if (isTranslationCommand) return false;
+
+      // ── ERKEN ÇIKIŞ: "Model Güncellemesi" / sistem talimatı formatı ──
+      // Kullanıcı bir güncelleme/talimat mesajı yazıyor, arama tetikleme
+      const isSystemNote =
+        /^(🧠|⚙️|🔧|📝|💡|🛠️|🤖)?\s*(model\s*(güncelleme|update|ayar|talimat)|sistem\s*(güncelleme|notu|talimatı|mesajı)|asistan\s*(ayarı|modu)|davranış\s*(güncelleme|ayar))/i.test(lower);
+      if (isSystemNote) return false;
+
+      // ── ERKEN ÇIKIŞ: Kullanıcı metin yapıştırıp biçimlendirme istiyor ──────
+      // Örn: kullanıcı araştırma sonucu/haber metni yapıştırıp "bunu makale yap",
+      // "şu şekilde yaz", "düzenle", "özetle" gibi komut ekliyor.
+      // Bu durumda ZATEN elinde veri var → internette arama yapma, sadece metni işle.
+      const wordCount = words.length;
+      const isLongMessage = wordCount >= 40; // Uzun mesaj = kullanıcı içerik yapıştırmış
+
+      // Kaynak atıfı var mı? (kaynak: xxx.com) — kullanıcı araştırma sonucu yapıştırmış
+      const hasCitationPattern =
+        /\(kaynak\s*:\s*[\w\-.]+\.\w{2,}\)/i.test(query) ||
+        /\(source\s*:\s*[\w\-.]+\.\w{2,}\)/i.test(query) ||
+        /kaynak\s*:\s*[\w\-.]+\.\w{2,}/i.test(query);
+
+      // Yazma/biçimlendirme komutu var mı? (mesajın herhangi bir yerinde)
+      const hasWritingCommand =
+        /\b(makale\s*(halinde|olarak|şeklinde)?\s*yaz|haber\s*(yaz|olarak|şeklinde)|rapor\s*(yaz|halinde|olarak)|özetle|özet\s*(çıkar|yap)|yeniden\s*(yaz|düzenle)|şu\s*(şekilde|halde|formatta)\s*yaz|düzenle|biçimlendir|formatla|paragraf\s*(yap|haline|olarak)|metne\s*(dönüştür|çevir)|temiz(le)?(\s*yaz)?|iyileştir)\b/i.test(lower);
+
+      // Uzun metin + kaynak atfı → kullanıcı kendi verisini getirmiş
+      if (hasCitationPattern) return false;
+
+      // Uzun metin + yazma/biçimlendirme komutu → kullanıcı yapıştırdığı metni işletmek istiyor
+      if (isLongMessage && hasWritingCommand) return false;
+
+      // Mesaj çok uzunsa (150+ kelime) ve içinde yazma komutu yoksa bile
+      // → Büyük ihtimalle kullanıcı bir metin yapıştırmış, bu metni internette arama
+      if (wordCount >= 120 && !lower.includes('?') &&
+          !/\b(ne\s*zaman|kim|nerede|fiyat|kaç|kur|dolar|hava|maç|skor|gündem|son\s*dakika)\b/.test(lower)) {
+        return false;
+      }
+
+      // ══════════════════════════════════════════════════════════════
+      // EN YÜKSEK ÖNCELİK: KARŞILAŞTIRMA / ÜRÜN MODELİ → HER ZAMAN ARA
+      // Kullanıcı önceki aramadan bağımsız, "X ile kıyasla", "X vs Y"
+      // "iPhone 17 Pro", "Galaxy S26 Ultra" gibi sorularda her zaman taze arama.
+      // ══════════════════════════════════════════════════════════════
+      // Karşılaştırma sinyali: sadece GERÇEK ürün/marka adlarıyla birlikte arama tetikle.
+      // "kıyasla" / "karşılaştır" tek başına veya kavramsal karşılaştırmalarda arama YAPMA.
+      const hasComparisonWord =
+        /\b(kıyasla|karşılaştır|kıyaslasana|karşılaştırsana|kıyaslar\s*mısın|karşılaştırır\s*mısın)\b/.test(lower) ||
+        /\b(vs\.?|versus)\b/i.test(lower) ||
+        /\b(farkı\s*ne|arasındaki\s*fark|hangisi\s*daha)\b/.test(lower);
+
+      if (hasComparisonWord) {
+        // Mevcut ürün/marka/model bilgisi gerektiren karşılaştırmalar → ARA
+        const hasSearchableEntity =
+          /\b(iphone|samsung|galaxy|pixel|xiaomi|oneplus|huawei|oppo|realme|motorola|redmi|poco|xperia|nothing|honor|macbook|thinkpad|dell|hp|lenovo|acer|asus|surface|chromebook)\b/i.test(lower) ||
+          /\b(rtx|rx\s*\d|gtx|radeon|geforce|gpu|rtx\s*\d{4}|rx\s*\d{4})\b/i.test(lower) ||
+          /\b(playstation|ps[45]|xbox|nintendo|switch|steam\s*deck)\b/i.test(lower) ||
+          /\b(netflix|spotify|disney\+?|youtube\s*premium|amazon\s*prime|apple\s*tv|hbo|twitch)\b/i.test(lower) ||
+          /\b(ford|toyota|honda|bmw|mercedes|audi|volkswagen|hyundai|kia|renault|fiat|tesla|togg)\b/i.test(lower) ||
+          // Sürüm numarası ile belirtilmiş ürünler
+          /\b(iphone|galaxy|pixel|oneplus|redmi|poco|xperia|nothing|macbook|ipad|watch)\s*\d{1,2}\b/i.test(lower) ||
+          /\b\d{3,4}\s*(ti|xt|super|ultra|plus|pro|max|fe)?\b/.test(lower);
+
+        // Araştırma gerektiren entity yoksa — AI karşılaştırmak için web'e gitmesin
+        if (hasSearchableEntity) return true;
+        // Karşılaştırma kelimesi var ama araştırılacak mevcut entity yoksa → arama yapma
+        // (Python vs JS, demokrasi vs cumhuriyet, motivasyon vs disiplin gibi)
+      }
+
+      // Telefon/tablet/laptop modeli + özellik/spec sorgusu → her zaman ara
+      // Örn: "iPhone 17 Pro özellikleri", "Galaxy S26 Ultra", "Pixel 9 Pro"
+      const phoneModelPattern =
+        /\b(iphone|galaxy|pixel|xiaomi|huawei|oneplus|oppo|realme|motorola|redmi|poco|xperia|nothing\s*phone|honor\s*magic|mate\s*\d|find\s*x)\b/i;
+      const bareModelPattern =
+        /\b(s\s?\d{1,2}\s*(ultra|plus|fe)?|note\s?\d{1,2}|z\s?(fold|flip)\s?\d|mi\s?\d{1,2})\b/i;
+      if ((phoneModelPattern.test(lower) || bareModelPattern.test(lower)) &&
+          // Bağlam: özellik/fiyat/kıyas/inceleme soruyor VEYA sadece model adı yazılmış
+          (/\b(özellik|özellikler|spec|teknik|inceleme|review|fiyat|kaç\s*tl|alsam|almalı|değer|nasıl|pil|kamera|ekran|işlemci|ram|batarya|performans)\b/.test(lower) ||
+           words.length <= 5)) {
+        return true;
+      }
+
+      // ══════════════════════════════════════════════════════════════
+      // SATIN ALMA TAVSİYESİ — İKİ ÜRÜN BİRLİKTE GEÇİYORSA ARA
+      // "iPhone 17 Pro mu S26 Ultra mı almalıyım?" → ARA
+      // "RTX 4080 mi 5070 mi alsam?" → ARA
+      // "Şunu mu bunu mu alayım?" → ARAMA (ürün yok, belirsiz)
+      // "Almalı mıyım?" tek başına → ARAMA (önceki bağlamda dönülsün)
+      // ══════════════════════════════════════════════════════════════
+      const hasBuyIntent =
+        /\b(alsam\s*mı|almalı\s*mıyım|alayım\s*mı|tercih\s*etmeli|hangisini\s*(alsam|almalıyım|alayım|tercih)|hangisi\s*daha\s*(iyi|mantıklı|avantajlı|uygun)|almaya\s*değer)\b/.test(lower);
+
+      if (hasBuyIntent) {
+        // İki farklı ürün/marka adı aynı cümlede geçiyor mu?
+        // Telefon markaları, GPU modelleri, laptop markaları, konsol vs.
+        const productBrandMatches = lower.match(
+          /\b(iphone|galaxy|pixel|xiaomi|huawei|oneplus|oppo|realme|motorola|redmi|poco|xperia|nothing|honor|samsung|apple|google|sony|asus|macbook|thinkpad|surface|rtx|rx|gtx|radeon|ryzen|intel|playstation|ps[45]|xbox|nintendo|switch)\b/gi
+        ) || [];
+        const bareModels = lower.match(
+          /\b(s\s?\d{1,2}\s*(?:ultra|plus|fe)?|note\s?\d{1,2}|z\s?(?:fold|flip)\s?\d|pixel\s?\d+|iphone\s?\d{1,2}(?:\s*(?:pro|plus|max|mini))?|\d{3,4}\s*(?:ti|xt|super)?)\b/gi
+        ) || [];
+        const uniqueProducts = new Set([...productBrandMatches, ...bareModels].map(s => s.trim().toLowerCase()));
+
+        // İki ürün/marka varsa → ARA. Sadece bir tane veya hiç yoksa → ARAMA.
+        if (uniqueProducts.size >= 2) return true;
+        // Sadece 1 ürün adı + "almalı mıyım" → yine ara (bu üründe tavsiye istiyor)
+        if (uniqueProducts.size === 1 && /\b(almalı\s*mıyım|alsam\s*mı|alayım\s*mı|almaya\s*değer|hangisi\s*daha\s*iyi)\b/.test(lower)) return true;
+        // Ürün adı yok, "şunu mu bunu mu alayım" gibi belirsiz → ARAMA
+        return false;
+      }
+
       // ══════════════════════════════════════════════════════════════
       // GLOBAL GÖRÜŞ/YORUM ENGELİ — Her koşulda geçerli
       // ══════════════════════════════════════════════════════════════
@@ -7380,7 +7711,7 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
 
           const hasProperNoun = queryWords.some(w => {
             const original = query.split(/\s+/).find(ow => ow.toLowerCase() === w);
-            if (original && /^[A-ZÇĞİÖŞÜ]/.test(original)) return true;
+            if (original) return true; // Büyük/küçük harf bağımsız özel isim kontrolü
             return w.length >= 4 && !/^\d+$/.test(w);
           });
 
@@ -7488,9 +7819,10 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
       if (aiTechCurrentPatterns.some(p => p.test(lower))) return true;
 
       // ── KATMAN 3: Zayıf / güçlü yön / artı-eksi sorgular ─────────
+      // Sadece spesifik bir konu/ürün/marka ile birlikte gelirse arama yap
       const weakStrongPatterns = [
-        /\b(zayıf|güçlü)\s*(yön|taraf|nokta|alan)\b/,
-        /\b(artıları|eksileri|avantajları|dezavantajları|faydaları|zararları|olumlu\s*yönleri|olumsuz\s*yönleri)\b/,
+        /\b(zayıf|güçlü)\s*(yön|taraf|nokta|alan)\b.*\b(nedir|neler|hangi|söyle|anlat)\b/,
+        /\b(artıları|eksileri|avantajları|dezavantajları|faydaları|zararları|olumlu\s*yönleri|olumsuz\s*yönleri)\b.*\b(nedir|neler|hangi)\b/,
         /\b(pros|cons|strengths|weaknesses|swot)\b/i,
         /\b(eksiklikleri|kusurları|sorunları|açıkları)\s*(neler|nedir|ne)\b/,
       ];
@@ -7560,8 +7892,9 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
         /\b(üniversite|okul|lise)\s*(kayıt|başvuru|taban\s*puan|kontenjan|tercih)/,
         /\b(burs|kredi|kyk)\s*(başvuru|sonuç|ne\s*kadar|şartları)/,
         /\b(meb|yök|ösym)\s*(açıkladı|duyurdu|karar)/,
-        // Ürün karşılaştırması
-        /\b(mi\s*daha\s*iyi|hangisi\s*daha|karşılaştır|farkı\s*ne|farkları\s*nedir)\b/,
+        // Ürün karşılaştırması — sadece marka/model adlarıyla birlikte
+        /\b(mi\s*daha\s*iyi|hangisi\s*daha)\b.*\b(iphone|samsung|galaxy|pixel|xiaomi|oneplus|huawei|macbook|rtx|rx|gtx|playstation|xbox|nintendo)\b/i,
+        /\b(iphone|samsung|galaxy|pixel|xiaomi|oneplus|huawei|macbook|rtx|rx|gtx|playstation|xbox|nintendo)\b.*\b(farkı\s*ne|farkları\s*nedir|hangisi\s*daha|karşılaştır)\b/i,
         /\b(iphone|samsung|xiaomi|huawei|pixel|oneplus)\s*\d+/,
         /\b(rtx|rx|gtx|radeon|geforce)\s*\d+/,
         /\b(m[1-4]|snapdragon|exynos|dimensity|kirin)\s*(pro|ultra|max|plus)?\b/,
@@ -7602,8 +7935,9 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
         /\b(benchmark|test\s*sonuç|performans\s*sonuç|karşılaştırma\s*sonuç|skor|leaderboard)\b/,
         // Açık bulma / arama komutu
         /\b(bulsana|araştır|araştırır\s*mısın|bulabilir\s*misin|bul\s*bakalım|bakabilir\s*misin)\b/,
-        // Farklı konu sinyali
-        /\b(başka|farklı|diğer|bir\s*de|şimdi\s*de|şimdi\s*bir|bir\s*şey\s*daha)\b/,
+        // Farklı konu sinyali — yalnızca gerçek arama komutuyla birlikte
+        // NOT: "başka", "farklı", "diğer" tek başına artık arama tetiklemiyor (çok geniş)
+        /\b(başka\s*(kaynak|site|yer|platform|seçenek)\s*(var\s*mı|bul|göster|öner))\b/,
         // Seyahat / vize
         /\b(vize|pasaport|giriş\s*şartları|seyahat\s*uyarısı)\s*(gerekiyor\s*mu|nasıl|ne\s*zaman|başvuru|şartları)\b/,
         /\b(uçak\s*bileti|tren\s*bileti|otobüs\s*bileti)\s*(fiyatı|ne\s*kadar|nasıl\s*alınır|en\s*ucuz)\b/,
@@ -7695,9 +8029,13 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
       ];
       for (const p of platformStatusPatterns) { if (p.test(lower)) return true; }
 
-      // ── KATMAN 11: İki büyük harfli özel isim + soru ──────────────
-      const namedPersonPattern = /([A-ZÇĞIÖŞÜ][a-zçğıöşü]+\s+[A-ZÇĞIÖŞÜ][a-zçğıöşü]+)\s+(kim|ne|nerede|ne\s+zaman|nasıl|kaç|öldü|evli|serveti|kimdir|nereli)/;
-      if (namedPersonPattern.test(query)) return true;
+      // ── KATMAN 11: İki kelimeli özel isim + soru (büyük/küçük harf bağımsız) ──
+      // İstisna: kurgu karakterleri veya metaforik/benzetme bağlamı ("gibi", "tarzında", "kadar", "olacağım", "olacağız")
+      const fictionalOrMetaphorContext = /\b(gibi|tarzında|kadar|olacağım|olacağız|olacaklar|olacak|hayali|kurgu|karakter|film|dizi|roman|anime|çizgi\s*roman|süper\s*kahraman|marvel|dc\s*comics)\b/i;
+      if (!fictionalOrMetaphorContext.test(lower)) {
+        const namedPersonPattern = /([A-ZÇĞİÖŞÜa-zçğıöşü]+\s+[A-ZÇĞİÖŞÜa-zçğıöşü]+)\s+(kim|ne|nerede|ne\s+zaman|nasıl|kaç|öldü|evli|serveti|kimdir|nereli)/i;
+        if (namedPersonPattern.test(query)) return true;
+      }
 
       // ── KATMAN 12: Güncel istatistik / rakam sorusu ───────────────
       const currentStatsPatterns = [
@@ -7723,7 +8061,21 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
 
     // ── ÖNBELLEK ──────────────────────────────────────────────────────────
     const _intentCache = new Map(); // key → { result, ts }
-    const _INTENT_CACHE_TTL = 15 * 60 * 1000; // 15 dakika (artırıldı — gereksiz LLM çağrısı azaltır)
+    // ── Dinamik TTL: Konuya göre cache süresi değişir ──
+    // Haber/finans sorguları → kısa (veri çabuk değişir)
+    // Genel/bilgi sorguları → uzun (değişmez bilgiler)
+    const _INTENT_CACHE_TTL_NEWS    =  3 * 60 * 1000; //  3 dakika — haber, finans, spor
+    const _INTENT_CACHE_TTL_TECH    = 10 * 60 * 1000; // 10 dakika — teknoloji, ürün
+    const _INTENT_CACHE_TTL_DEFAULT = 30 * 60 * 1000; // 30 dakika — genel sorular
+
+    function _getIntentCacheTTL(msg) {
+      const l = msg.toLowerCase();
+      if (/\b(haber|gündem|son\s*dakika|borsa|dolar|euro|bitcoin|kur|maç|skor|deprem|seçim)\b/.test(l))
+        return _INTENT_CACHE_TTL_NEWS;
+      if (/\b(iphone|galaxy|model|sürüm|güncelleme|yapay\s*zeka|ai|gpt|claude|gemini|nvidia|amd)\b/.test(l))
+        return _INTENT_CACHE_TTL_TECH;
+      return _INTENT_CACHE_TTL_DEFAULT;
+    }
 
     function _intentCacheKey(msg) {
       // Mesajı normalize et: küçük harf, fazla boşluk sil, noktalama kaldır
@@ -7734,7 +8086,8 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
       const key = _intentCacheKey(msg);
       const entry = _intentCache.get(key);
       if (!entry) return null;
-      if (Date.now() - entry.ts > _INTENT_CACHE_TTL) { _intentCache.delete(key); return null; }
+      const ttl = _getIntentCacheTTL(msg);
+      if (Date.now() - entry.ts > ttl) { _intentCache.delete(key); return null; }
       return entry.result;
     }
 
@@ -7789,6 +8142,81 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
       // Saf matematik / kod
       if (/^[\d\s\+\-\*\/\(\)\^%=<>!&|.,;:]+$/.test(lower)) return { shouldSearch: false };
 
+      // ── Metin düzenleme / editöryal / meta-talimat → LLM'e bile sorma ──────
+      // Bu mesajlar arama gerektirmez, direkt modelin cevap vermesi gerekir.
+      const isEditOrMeta =
+        (/\b(değiştir|düzelt|düzenle|güncelle|yeniden\s*yaz|tekrar\s*yaz|kaldır|ekle|sil|çıkar)\b/.test(lower) &&
+         /\b(metni?|paragraf|cümle?|kelime|başlık|içerik|bölüm|şu\s*kısmı?|bunu|şunu|yerine|şununla|bununla)\b/.test(lower)) ||
+        /\b(anahtar\s*kelime|sistem\s*prompt|model\s*ayar|sistem\s*mesaj|bağlam\s*ekle)\b/.test(lower) ||
+        /^(🧠|⚙️|🔧|📝|💡|🛠️|🤖)?\s*(model\s*(güncelleme|update|ayar|talimat)|sistem\s*(güncelleme|notu|talimatı|mesajı))/i.test(lower);
+      if (isEditOrMeta) return { shouldSearch: false };
+
+      // ── Çeviri komutları → AI direkt çevirir, LLM'e bile sormaya gerek yok ──
+      const isTranslation =
+        /\b(ingilizcey[ae]|türkçey[ae]|almancay[ae]|fransızcay[ae]|ispanyolcay[ae]|rusçay[ae]|arapçay[ae])\s*(çevir|translate|dönüştür)\b/i.test(lower) ||
+        /\b(translate\s*(this|it|to)|bunu\s*\w+ceye?\s*çevir)\b/i.test(lower) ||
+        (/\b(çevir|çevirir\s*misin|translate)\b/i.test(lower) &&
+         /\b(ingilizce|türkçe|almanca|fransızca|ispanyolca|rusça|arapça|japonca|çince|korece|italyanca)\b/i.test(lower));
+      if (isTranslation) return { shouldSearch: false };
+
+      // ── Yapıştırılan metin + yazma/biçimlendirme komutu → arama yapma ──────
+      // Kullanıcı kendi elindeki metni işletmek istiyor, internete gitmeye gerek yok.
+      const wc = lower.split(/\s+/).length;
+      const hasCitation = /\(kaynak\s*:\s*[\w\-.]+\.\w{2,}\)/i.test(userMessage) ||
+                          /kaynak\s*:\s*[\w\-.]+\.\w{2,}/i.test(userMessage);
+      const hasWriteCmd = /\b(makale\s*(halinde|olarak|şeklinde)?\s*yaz|haber\s*(yaz|olarak)|rapor\s*(yaz|halinde)|özetle|özet\s*(çıkar|yap)|yeniden\s*(yaz|düzenle)|şu\s*(şekilde|halde|formatta)\s*yaz|düzenle|biçimlendir|formatla|iyileştir)\b/i.test(lower);
+      if (hasCitation) return { shouldSearch: false };
+      if (wc >= 40 && hasWriteCmd) return { shouldSearch: false };
+      if (wc >= 120 && !lower.includes('?') &&
+          !/\b(ne\s*zaman|kim|nerede|fiyat|kaç|kur|dolar|hava|maç|skor|gündem|son\s*dakika)\b/.test(lower)) {
+        return { shouldSearch: false };
+      }
+
+      // ── KURGU KARAKTERİ / METAFORİK KULLANIM ERKEN ÇIKIŞ ────────────────
+      // Kullanıcı bilinen bir kurgu karakterini metafor/benzetme olarak kullanıyorsa arama yapma
+      const FICTIONAL_CHARACTERS = [
+        'tony stark','iron man','batman','superman','spider-man','spiderman','spider man',
+        'captain america','thor','hulk','black widow','hawkeye','doctor strange',
+        'black panther','wonder woman','aquaman','the flash','green lantern',
+        'sherlock holmes','harry potter','hermione granger','ron weasley','gandalf',
+        'frodo baggins','aragorn','legolas','daenerys','jon snow','tyrion lannister',
+        'walter white','heisenberg','saul goodman','michael scott','dwight schrute',
+        'darth vader','luke skywalker','yoda','obi-wan','han solo','hermione',
+        'james bond','indiana jones','jack sparrow','forrest gump','rocky balboa',
+        'hannibal lecter','joker','lex luthor','thanos','loki','deadpool',
+        'wolverine','professor x','magneto','scarlet witch','vision',
+        'neo','morpheus','john wick','ethan hunt','jason bourne',
+        'naruto','sasuke','goku','vegeta','luffy','zoro','ichigo','eren yeager',
+        'light yagami','l lawliet','edward elric','roy mustang',
+        'mickey mouse','donald duck','bugs bunny','homer simpson','bart simpson',
+        'spongebob','patrick star','shrek','donkey','buzz lightyear','woody'
+      ];
+
+      const METAPHOR_TRIGGERS = [
+        'gibi','tarzinda','tarzi','kadar','olacagim','olacagiz','olacaklar',
+        'olacak misin','olmak istiyorum','olmak istiyoruz','hayali','kurgu',
+        'karakter','film','dizi','roman','anime','cizgi roman','super kahraman',
+        'marvel','dc comics','benzetme','metafor','sanki','adeta','neredeyse',
+        'yeni nesil','modern versiyonu','turk versiyonu','yerli versiyonu'
+      ];
+
+      // Normalize Turkish chars for matching
+      function _normTR(s) {
+        return s.replace(/[ğĞ]/g,"g").replace(/[üÜ]/g,"u").replace(/[şŞ]/g,"s")
+               .replace(/[ıİ]/g,"i").replace(/[öÖ]/g,"o").replace(/[çÇ]/g,"c");
+      }
+      const lowerNorm = _normTR(lower);
+
+      const hasFictionalChar = FICTIONAL_CHARACTERS.some(fc => lowerNorm.includes(_normTR(fc)));
+      const hasMetaphorTrigger = METAPHOR_TRIGGERS.some(mt => lowerNorm.includes(_normTR(mt)));
+
+      // Kurgu karakter + metafor tetikleyici → kesinlikle arama yapma
+      if (hasFictionalChar && hasMetaphorTrigger) return { shouldSearch: false };
+
+      // Kurgu karakter var ama doğrudan detay sorusu yok → arama yapma
+      const directQuestionAboutChar = /\b(kim(dir)?|ne\s+zaman|kaç|öldü|doğdu|serveti|eşi|boyu|yaşı|nereli|milliyeti|filmleri|dizileri)\b/;
+      if (hasFictionalChar && !directQuestionAboutChar.test(lower)) return { shouldSearch: false };
+
       // Kara liste kontrolü — kullanıcı daha önce bu tip aramayı beğenmedi
       if (_intentBlacklistCheck(userMessage)) return { shouldSearch: false };
 
@@ -7796,15 +8224,8 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
       const cached = _intentCacheGet(userMessage);
       if (cached !== null) return cached;
 
-      // ── Konuşma bağlamı: son 4 mesaj (2 tur) ─────────────────────────
-      const recentHistory = (typeof chatHistory !== 'undefined' ? chatHistory : [])
-        .slice(-4)
-        .map(m => `${m.role === 'user' ? 'Kullanıcı' : 'Asistan'}: ${String(m.content).slice(0, 120)}`)
-        .join('\n');
-
-      const contextBlock = recentHistory
-        ? `\nSon konuşma bağlamı:\n${recentHistory}\n`
-        : '';
+      // ── Konuşma bağlamı: Sliding window (son 8 mesaj, en eski önce atılır) ──
+      const contextBlock = getSearchContextBlock();
 
       try {
         const resp = await fetch(secure.apiUrl, {
@@ -7814,7 +8235,7 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'llama-3.1-8b-instant', // Hızlı model — niyet tespiti için yeterli
+            model: 'llama-3.3-70b-versatile', // Hızlı model — niyet tespiti için yeterli
             max_tokens: 100,
             temperature: 0,
             messages: [
@@ -7823,10 +8244,13 @@ Kullanıcı bu soruyu sana güvenerek sordu. O güveni eksiksiz karşıla.`;
                 content: `Sen bir arama karar motorusun. Görevin tek ve kritik: kullanıcının mesajının web araması gerektirip gerektirmediğine DOĞRU karar vermek.
 
 ═══════════════════════════════════════════════════════════════
-TEMEL FELSEFE: Varsayılan karar her zaman "ARA"dır.
-"Arama yapma" kararı sadece aşağıdaki açık istisnalarda verilir.
-Şüphe durumunda → ARA. Yanılma ihtimalin varsa → ARA.
-Bilgin eski olabilir mi? → ARA. Özel isim/marka geçiyor mu? → ARA.
+TEMEL FELSEFE: Varsayılan karar "ARAMA YAPMA"dır.
+Arama kararı SADECE gerçekten güncel/değişken veriye ihtiyaç duyulan durumlarda verilir.
+Şüphe durumunda → ARAMA YAPMA. Model zaten biliyorsa → ARAMA YAPMA.
+Kavramsal/teorik soru → ARAMA YAPMA. Yaratıcı/editöryal istek → ARAMA YAPMA.
+SADECE: Güncel fiyat, haber, istatistik, canlı skor, anlık kur, spesifik kişi/ürün araştırması → ARA.
+Muğlak, genel veya spesifik konu içermeyen mesajlar → ARAMA YAPMA.
+Metin düzenleme, model yönlendirme, editöryal talimat → KESİNLİKLE ARAMA YAPMA.
 ═══════════════════════════════════════════════════════════════
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -7862,6 +8286,37 @@ ARAMA YAPMA — SADECE bu 6 kategoride:
    Kişisel durum, his paylaşımı, genel sohbet.
    ✓ "Merhaba nasılsın", "Bugün çok yoruldum", "Sence hayatın anlamı ne"
    ✗ ARAMA YAP eğer kendi görüşünü sormakla birlikte gerçek bir olay/kişi/eser hakkında bilgi de isteniyorsa.
+
+7. KURGU KARAKTERİ / METAFORİK KULLANIM
+   Kullanıcı bir kurgu karakterini (Tony Stark, Batman, Hermione vb.) benzetme veya metafor olarak kullanıyorsa ARAMA YAPMA.
+   ✓ "Geleceğin Tony Stark'ı olacağım" → false (kullanıcı kendini anlatıyor, kurgu karakter benzetmesi)
+   ✓ "Onlar geleceğin Tony Stark'larını olacak" → false (metafor, gerçek kişi araştırması değil)
+   ✓ "Ben bir nevi Iron Man gibi düşünüyorum" → false (benzetme)
+   ✗ ARAMA YAP eğer "Tony Stark kimdir" veya "Tony Stark kaç para kazandı" gibi o karakterin özellikleri/detayları soruluyorsa (fakat bu nadir durumdur).
+
+8. METİN DÜZENLEME / EDİTÖRYAL TALİMAT / MODEL YÖNLENDİRME
+   Kullanıcı bir metni değiştir/düzelt/güncelle istiyor veya modele talimat/context veriyor → KESİNLİKLE ARAMA YAPMA.
+   ✓ "Bunu şununla değiştir" → false (metin düzenleme talimatı)
+   ✓ "Şu kelimeyi kaldır" → false (editöryal)
+   ✓ "Model Güncellemesi: Daha Derin Anlama..." → false (model context/talimatı, kullanıcı modeli yönlendiriyor)
+   ✓ "Anahtar kelimeler şunlar: ..." → false (meta-talimat, içerik verisi değil)
+   ✓ "Bak metni sen düzenleyecek misin?" → false (kullanıcı editöryal yardım istiyor)
+   ✓ "Bunu şey olarak da güncelle" → false (içerik güncelleme talebi)
+   ✗ ARAMA YAP eğer "güncel model versiyonu ne" gibi gerçek bir bilgi sorusu ise.
+
+9. KULLANICI KENDİ METNİNİ/VERİSİNİ GETİRMİŞ + İŞLEME KOMUTU
+   Kullanıcı zaten elinde bir metin, araştırma sonucu veya veri bloğu var ve bunu işletmek istiyor.
+   Bu durumda internet araması tamamen gereksizdir — veri zaten mesajın içinde.
+   ✓ "[uzun metin bloğu] ... bunu makale halinde yaz" → false (veri var, sadece formatla)
+   ✓ "[kaynak: muskarahaber.com içeren metin] ... şu şekilde düzenle" → false (veri mevcut)
+   ✓ "[araştırma sonucu yapıştırılmış] ... özetle / rapor yap / haber yaz" → false (metin işleme)
+   ✓ Mesajda "(kaynak: xxx.com)" veya "kaynak: xxx.com" formatında kaynak atıfı varsa → KESİNLİKLE false
+   ✓ 50+ kelimelik mesaj + "makale yaz / özetle / düzenle / rapor yap" komutu → false
+   ✗ ARAMA YAP SADECE eğer metin kısa + net bir güncel bilgi sorusu varsa.
+
+   ANAHTAR TEST: Kullanıcı o ismi bir benzetme/metafor olarak mı kullanıyor, yoksa o kişi/karakter hakkında gerçek bilgi mi istiyor?
+   Benzetme/metafor → false. Gerçek bilgi isteği → true.
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 MUTLAKA ARA — bu kategorilerden herhangi biri geçerliyse:
@@ -7957,6 +8412,20 @@ shouldSearch: FALSE örnekleri:
 - "Bir uzay macerası hikayesi yaz" → false (yaratıcı, özel isim yok)
 - "Demokrasi ne demek" → false (kavram tanımı)
 - "Türkçede büyük harf kuralları" → false (dil bilgisi)
+- "Geleceğin Tony Stark'ı olacağım" → false (kurgu karakteri metafor olarak kullanılıyor, araştırma değil)
+- "Onlar geleceğin Tony Stark'larını olacak" → false (benzetme ifadesi)
+- "Ben bir Sherlock Holmes gibi düşünüyorum" → false (kurgusal benzetme)
+- "Sence ben başarılı biri miyim, Ümit Kalko gibi?" → false (kullanıcı kendi durumunu anlatıyor, benzetme)
+- "Bunu şununla değiştir" → false (metin düzenleme talimatı, arama gerektirmez)
+- "Model Güncellemesi: derin anlama yerine şey olarak değiştir" → false (editöryal/meta-talimat)
+- "Bak metni sen düzenleyecek misin" → false (editöryal yönlendirme)
+- "Anahtar kelimeler şunlar:" → false (meta-bilgi verme)
+- "Modanın içinde küçük bir model var" → false (bağlamsal meta-açıklama)
+- "kıyasla" / "karşılaştır" tek başına (ürün/marka adı olmadan) → false (AI zaten biliyor, web gerekmez)
+- "Python ile JavaScript'i kıyasla" → false (programlama dili karşılaştırması, web gerekmez)
+- "[uzun haber/araştırma metni] ... bunu makale halinde yaz" → false (kullanıcı kendi metnini işletiyor, arama gerekmez)
+- "[kaynak: xxx.com içeren metin] ... şu şekilde düzenle/özetle" → false (veri zaten mevcut, internete gitme)
+- "[50+ kelimelik yapıştırılmış metin] ... rapor yap / yeniden yaz / özetle" → false (metin işleme görevi)
 
 ÖNEMLİ KURAL — SELAMLA BAŞLAYAN SORULAR:
 Kullanıcı "selam dostum X nedir", "merhaba X hakkında ne biliyorsun" gibi selamla başlayan ama devamında gerçek bir soru/konu içeren mesajlar gönderebilir.
@@ -7971,12 +8440,33 @@ ZORUNLU ÇIKIŞ FORMATI — sadece geçerli JSON:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 { "shouldSearch": true/false, "confidence": 0.0-1.0, "query": "optimize edilmiş arama terimi veya null" }
 
-Karar: Şüphe varsa → shouldSearch: true. Az arama yapmak, fazla aramaktan çok daha tehlikelidir. Yanlış bilgi güvenden daha zararlıdır.
-Sadece JSON döndür, başka hiçbir şey yazma.`
+Karar: Mesajda spesifik bir konu, isim, ürün, olay veya güncel veri isteği AÇIKÇA yoksa → shouldSearch: false. Muğlak/genel istekler, sohbet cümleleri, görüş soruları veya model bilgisiyle rahatça yanıtlanabilecek sorular → shouldSearch: false. Sadece gerçekten değişken/güncel bilgi gerektiren somut sorular → shouldSearch: true.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BAĞLAM KULLANARAK QUERY OPTİMİZASYONU — KRİTİK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Eğer kullanıcının mesajı belirsiz veya kısa ise (örn: "kaç ölü var", "ne oldu", "peki sonra", "ona ne yapıldı", "kaçı kurtuldu"),
+SON KONUŞMA BAĞLAMINI kullanarak query'yi TAM VE AÇIK hale getir.
+
+ÖRNEKLER:
+- Bağlam: "Şanlıurfa okul saldırısı" hakkında konuşuldu → Mesaj: "kaç ölü var" → query: "Şanlıurfa okul saldırısı ölü yaralı sayısı 2026"
+- Bağlam: "Fenerbahçe Galatasaray maçı" hakkında konuşuldu → Mesaj: "kim attı golü" → query: "Fenerbahçe Galatasaray maç golü atan isimler"
+- Bağlam: "iPhone 17 özellikleri" hakkında konuşuldu → Mesaj: "fiyatı ne kadar" → query: "iPhone 17 fiyatı Türkiye 2026"
+- Bağlam: yok → Mesaj: "kaç ölü var" → shouldSearch: false (bağlam yok, anlamsız sorgu)
+
+KURAL: Mesaj kısaysa/belirsizse ve bağlamda bir konu varsa, o konuyu query'ye dahil et.
+Bağlam yoksa ve mesaj tek başına anlamsızsa → shouldSearch: false.
+
+Sadece JSON döndür, başka hiçbir şey yazma.
+
+
+`
               },
               {
               role: 'user',
               content: `${contextBlock}Kullanıcının mesajı: "${userMessage}"
+
+ÖNEMLİ: Eğer mesaj kısa/belirsiz ise (örn: "kaç ölü var", "ne oldu", "ona ne oldu", "peki"), yukarıdaki konuşma bağlamından konuyu anlayarak query'yi genişlet. Bağlam yoksa shouldSearch: false döndür.
 
 Arama gerekli mi? JSON döndür:`
             }]
@@ -7990,18 +8480,20 @@ Arama gerekli mi? JSON döndür:`
         const parsed = JSON.parse(clean);
 
         const confidence = typeof parsed.confidence === 'number' ? parsed.confidence : 1.0;
-        const shouldSearch = parsed.shouldSearch === true && confidence >= 0.65;
+        const shouldSearch = parsed.shouldSearch === true && confidence >= 0.80; // yükseltildi: yanlış aramaları azaltır
 
-        // ── Sorguya yıl ekle (güncel sonuçlar için) ───────────────────
+        // ── Sorguya yıl ekle (sadece tarih/yıl bağımlı sorgulara) ───
         let query = (parsed.query && parsed.query !== 'null') ? parsed.query : userMessage;
-        if (shouldSearch && !/\b(202[4-9]|203\d)\b/.test(query)) {
+        // Sadece açıkça yıla bağlı sorgularda (sıralama, istatistik, kazanan, ödül, fiyat vb.) yıl ekle
+        const yearDependentPattern = /\b(en \w+ (hangisi|kim|ne)|sıralama|kazanan|ödül|fiyat|kaç \w+|nüfus|stats?|ranking|winner|price|award|top \d|most \w+|best \w+|latest|güncel|son (dakika|gelişme|haber))\b/i;
+        if (shouldSearch && !/\b(202[4-9]|203\d)\b/.test(query) && yearDependentPattern.test(query)) {
           query = `${query} ${new Date().getFullYear()}`;
         }
 
         const result = { shouldSearch, confidence, query };
 
         // Önbelleğe yaz (düşük güvenli "hayır" kararlarını cache'leme)
-        if (confidence >= 0.65) _intentCacheSet(userMessage, result);
+        if (confidence >= 0.80) _intentCacheSet(userMessage, result);
 
         return result;
 
@@ -8026,12 +8518,8 @@ Arama gerekli mi? JSON döndür:`
       const cacheKey = userMessage.trim().toLowerCase().slice(0, 120);
       if (_queryOptCache.has(cacheKey)) return _queryOptCache.get(cacheKey);
 
-      // Konuşma bağlamı: son 2 tur
-      const recentHistory = (typeof chatHistory !== 'undefined' ? chatHistory : [])
-        .slice(-4)
-        .map(m => `${m.role === 'user' ? 'Kullanıcı' : 'Asistan'}: ${String(m.content).slice(0, 100)}`)
-        .join('\n');
-      const contextBlock = recentHistory ? `\nSon konuşma bağlamı:\n${recentHistory}\n` : '';
+      // Konuşma bağlamı: Sliding window (son 8 mesaj)
+      const contextBlock = getSearchContextBlock();
 
       try {
         const resp = await fetch(secure.apiUrl, {
@@ -8041,13 +8529,13 @@ Arama gerekli mi? JSON döndür:`
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'llama-3.1-8b-instant', // Hızlı model — sorgu optimizasyonu için yeterli
+            model: 'llama-3.3-70b-versatile', // Hızlı model — sorgu optimizasyonu için yeterli
             max_tokens: 80,
             temperature: 0,
             messages: [
               {
                 role: 'system',
-                content: `Sen bir arama sorgusu optimizasyon motorusun. Görevin: kullanıcının doğal dil sorusunu, web arama motorunda kesin ve doğru sonucu verecek en etkili arama terimine dönüştürmek.\n\nTEMEL KURALLAR:\n- Dolgu kelimeleri at: "bana söyle", "öğrenmek istiyorum", "acaba", "ya", "yani", "merak ediyorum", "söyle misin" vb.\n- Özel isimleri, marka adlarını, sanatçı/grup adlarını, ürün adlarını TAM OLARAK koru — asla kısaltma\n- Coğrafi bağlam varsa ekle (ör: Türkiye, İstanbul, global)\n- Yıl ekleme — zaten ayrıca üst katmanda işleniyor\n- 2-8 kelime arası, Türkçe veya İngilizce (sanatçı/ürün İngilizce ise İngilizce sorgula)\n- Sadece optimize edilmiş sorguyu yaz, başka hiçbir şey yazma\n- Konuşma bağlamını kullan: "bu oyun", "o film", "bu grup" gibi zamirler varsa bağlamdan gerçek ismi koy\n\nKATEGORIYE GÖRE OPTİMİZASYON:\n\nMÜZİK: En çok dinlenen/popüler şarkı → "[Ad] most streamed songs Spotify" veya "[Ad] en popüler şarkılar"\n  "Manifest grubunun en çok dinlenen şarkısı" → "Manifest group most streamed songs"\n  "BTS en popüler şarkısı" → "BTS most popular songs all time"\n  "Weeknd Spotify dinleyici sayısı" → "The Weeknd Spotify monthly listeners"\n  "Tarkan en sevilen şarkıları" → "Tarkan en popüler şarkılar"\n\nFİLM/DİZİ: Sıralama → "IMDb rating" ekle | Sezon/bölüm → "release date season N"\n  "Squid Game yeni sezon ne zaman" → "Squid Game season 3 release date"\n\nSPOR: Skor → "son maç sonucu" | Transfer → "transfer 2025" | Stats → "stats sezon"\n  "Galatasaray son maç" → "Galatasaray son maç sonucu"\n  "Mbappe hangi takımda" → "Mbappe current team 2025"\n\nTEKNOLOJİ: Fiyat → ülke + "fiyat" | Müsaitlik → "Türkiye availability"\n  "iPhone 17 ne kadar" → "iPhone 17 fiyat Türkiye"\n\nSIRALAMA/İSTATİSTİK: "En çok/en iyi" → platform/kaynak + yıl ekle\n  "Steam en çok oynanan oyun" → "Steam most played games 2025"\n\nGENEL ÖRNEKLER:\n"iPhone 16 Pro Max ne kadar" → "iPhone 16 Pro Max fiyat Türkiye"\n"ChatGPT Plus'a nasıl abone olunur" → "ChatGPT Plus abonelik nasıl"\n"Survivor bu yıl kim kazandı" → "Survivor 2025 kazanan"\n"Tesla Model 3 Türkiye'de var mı" → "Tesla Model 3 Türkiye satış"\n"o dizinin yeni sezonu ne zaman çıkıyor" (bağlamda: Squid Game) → "Squid Game yeni sezon çıkış tarihi"`
+                content: `Sen bir arama sorgusu optimizasyon motorusun. Görevin: kullanıcının doğal dil sorusunu, web arama motorunda kesin ve doğru sonucu verecek en etkili arama terimine dönüştürmek.\n\nTEMEL KURALLAR:\n- Dolgu kelimeleri at: "bana söyle", "öğrenmek istiyorum", "acaba", "ya", "yani", "merak ediyorum", "söyle misin" vb.\n- Özel isimleri, marka adlarını, sanatçı/grup adlarını, ürün adlarını TAM OLARAK koru — asla kısaltma\n- Coğrafi bağlam varsa ekle (ör: Türkiye, İstanbul, global)\n- Yıl ekleme — zaten ayrıca üst katmanda işleniyor\n- 2-8 kelime arası, Türkçe veya İngilizce (sanatçı/ürün İngilizce ise İngilizce sorgula)\n- Sadece optimize edilmiş sorguyu yaz, başka hiçbir şey yazma\n- Konuşma bağlamını kullan: "bu oyun", "o film", "bu grup" gibi zamirler varsa bağlamdan gerçek ismi koy\n\nKATEGORIYE GÖRE OPTİMİZASYON:\n\nMÜZİK: En çok dinlenen/popüler şarkı → "[Ad] most streamed songs Spotify" veya "[Ad] en popüler şarkılar"\n  "Manifest grubunun en çok dinlenen şarkısı" → "Manifest group most streamed songs"\n  "BTS en popüler şarkısı" → "BTS most popular songs all time"\n  "Weeknd Spotify dinleyici sayısı" → "The Weeknd Spotify monthly listeners"\n  "Tarkan en sevilen şarkıları" → "Tarkan en popüler şarkılar"\n\nFİLM/DİZİ: Sıralama → "IMDb rating" ekle | Sezon/bölüm → "release date season N"\n  "Squid Game yeni sezon ne zaman" → "Squid Game season 3 release date"\n\nSPOR: Skor → "son maç sonucu" | Transfer → "transfer 2025" | Stats → "stats sezon"\n  "Galatasaray son maç" → "Galatasaray son maç sonucu"\n  "Mbappe hangi takımda" → "Mbappe current team 2025"\n\nTEKNOLOJİ: Fiyat → ülke + "fiyat" | Müsaitlik → "Türkiye availability"\n  "iPhone 17 ne kadar" → "iPhone 17 fiyat Türkiye"\n\nFİRMWARE / YAZILIM GÜNCELLEMESİ: Cihaz adını TAM koru + İngilizce teknik terim ekle\n  Türkçe "güncelleme aldı/alacak mı/hangi güncelleme" → İngilizce "firmware update" / "software update" / "latest update"\n  "Samsung CJ7 Prime en son güncelleme" → "Samsung Galaxy CJ7 Prime latest software update"\n  "iPhone 13 en son ios" → "iPhone 13 latest iOS update version"\n  "Xiaomi Redmi Note 12 güncelleme aldı mı" → "Xiaomi Redmi Note 12 latest MIUI update"\n  "Samsung Galaxy A54 Android güncellemesi" → "Samsung Galaxy A54 Android update schedule"\n  KURAL: Cihaz adını tam yaz, "güncelleme" yerine "update" / "firmware" / "latest version" kullan\n  KURAL: Samsung ürünlerinde samsung.com/sammobile.com'da aranacak şekilde optimize et\n\nSIRALAMA/İSTATİSTİK: "En çok/en iyi" → platform/kaynak + yıl ekle\n  "Steam en çok oynanan oyun" → "Steam most played games 2025"\n\nGENEL ÖRNEKLER:\n"iPhone 16 Pro Max ne kadar" → "iPhone 16 Pro Max fiyat Türkiye"\n"ChatGPT Plus'a nasıl abone olunur" → "ChatGPT Plus abonelik nasıl"\n"Survivor bu yıl kim kazandı" → "Survivor 2025 kazanan"\n"Tesla Model 3 Türkiye'de var mı" → "Tesla Model 3 Türkiye satış"\n"o dizinin yeni sezonu ne zaman çıkıyor" (bağlamda: Squid Game) → "Squid Game yeni sezon çıkış tarihi"`
               },
               {
                 role: 'user',
@@ -8148,6 +8636,13 @@ Arama gerekli mi? JSON döndür:`
         /^(daha\s+fazla\s+(bilgi|anlat|ver|açıkla|yaz))[?!.]?$/,
         /^(anlat\s+bakalım|anlat\s+biraz|biraz\s+anlat)[?!.]?$/,
         /^(devam\s+et|devam|sürdür)[?!.]?$/,
+        // Saf sohbet/tepki kalıpları — arama gerektirmez, Jarvis hafızasından konuşur
+        /^(peki|tamam|anlıyorum|anladım|ilginç|vay|vay\s+be|inanılmaz|şaşırdım|şaşırtıcı|harika|süper|müthiş|güzel)[.!]?\s*$/,
+        /^(devam\s+et|anlat\s+bakalım|anlat\s+devam|anlatsana|haydi\s+anlat)[?!.]?$/,
+        /^(başka\s+neler\s+(var|biliyor\s*sun)|başka\s+ne\s+söyleyebilirsin)[?!.]?$/,
+        /^(gerçekten\s+mi|cidden\s+mi|yani|yani\s+ne)[?!.]?$/,
+        /^(o\s+zaman\s+ne\s+yapalım|ne\s+yapmalıyım)[?!.]?$/,
+        /^(daha\s+fazla\s+(anlat|bilgi|ver))[?!.]?$/,
         // "Peki ya X?" kalıbı — önceki konunun alt kolu
         /^peki(\s+ya)?\s+.{1,60}[?!.]?$/,
         /^ya\s+(da\s+)?[a-zçğıöşü].{1,50}[?!.]?$/,
@@ -8606,6 +9101,10 @@ Arama gerekli mi? JSON döndür:`
       if (/\b(iphone|samsung|xiaomi|pixel|oneplus|huawei|sony|oppo|realme|motorola|asus|honor|nothing|galaxy|redmi|poco|xperia|zenfone)\b.{0,50}\b(\d+|pro|ultra|max|plus|lite|mini|fe|s|note|fold|flip|air|edge)\b/i.test(q))
         return 'tech';
       if (/\b(iphone|samsung|xiaomi|pixel|oneplus|huawei|sony|oppo|realme|motorola|asus|honor|nothing)\b.{0,60}\b(vs|versus|karşı|mi\s*daha|hangisi|karşılaştır|farkı|öneri|tavsiye|alsam|almalı|değer\s*mi|kaç\s*tl|fiyat)\b/i.test(q))
+        return 'tech';
+      // Çıplak model kodu ("s26 ultra", "note 22", "z fold 6") → marka yazılmasa da tech
+      if (/^\s*(s\s?\d{1,2}\s*(ultra|plus|fe)?|note\s?\d{1,2}|z\s?(fold|flip)\s?\d|pixel\s?\d|iphone\s?\d{1,2})\b/i.test(q) ||
+          /\b(s\s?\d{1,2}\s*ultra|z\s?fold\s?\d|z\s?flip\s?\d|pixel\s?\d+\s*(pro|xl)?)\b.{0,30}\b(kıyasla|karşılaştır|vs|versus|özellik|inceleme|fiyat)\b/i.test(q))
         return 'tech';
 
       // ── Ürün karşılaştırma / satın alma / güncelleme süresi ──
@@ -9158,8 +9657,9 @@ Sadece bu iki formattan birini yaz.`;
             chatMessages.appendChild(noteDiv);
             scrollToBottom();
 
-            const results = await tavilySearch(searchQuery);
+            const verifyRes = await tavilySearch(searchQuery);
             chatMessages.removeChild(noteDiv);
+            const results = verifyRes?.results;
 
             if (results && results.length > 0) {
               const verifyDiv = document.createElement('div');
@@ -9222,9 +9722,24 @@ Sadece bu iki formattan birini yaz.`;
       const { skipUserMessage = false, displayMessage = null } = options;
       let query = searchText?.trim();
       if (!query) {
-        alert("🔍 Aranacak bir şey yazmalısınız.");
-        return;
+        jarvisToast("🔍 Aranacak bir şey yazmalısınız.", "warn"); return;
       }
+
+      // ── Türkçe komut kelimelerini sorguden temizle ──
+      // "iPhone 17 araştır" → "iPhone 17", "dolar kaçtır söyle" → "dolar kuru"
+      query = query
+        .replace(/\baraştır\b/gi, '')
+        .replace(/\baraştırır\s*mısın\b/gi, '')
+        .replace(/\bbulsana\b/gi, '')
+        .replace(/\bsöyle\b/gi, '')
+        .replace(/\banlat\b/gi, '')
+        .replace(/\bbul\b/gi, '')
+        .replace(/\bgöster\b/gi, '')
+        .replace(/\bver\b/gi, '')
+        .replace(/\byazabilir\s*misin\b/gi, '')
+        .replace(/\blütfen\b/gi, '')
+        .replace(/\bacaba\b/gi, '')
+        .replace(/\s+/g, ' ').trim();
 
       const originalQuery = displayMessage || query;
       
@@ -9256,8 +9771,7 @@ Sadece bu iki formattan birini yaz.`;
           <div class="search-loading search-loading--compact">
             <div class="search-loading-spinner"></div>
             <div class="search-loading-text">
-              <span class="search-loading-label">${isDeep ? '🔬 Derinlemesine aranıyor' : '🌐 İnternette aranıyor'}</span>
-              <span class="search-query-highlight search-query-highlight--clamp" title="${escapeHTML(query)}">${escapeHTML(query)}</span>
+              <span class="search-loading-label">${isDeep ? '🔬 Derinlemesine araştırılıyor…' : '🌐 Araştırılıyor…'}</span>
             </div>
           </div>
         </div>
@@ -9265,21 +9779,144 @@ Sadece bu iki formattan birini yaz.`;
       chatMessages.appendChild(searchingDiv);
       scrollToBottom();
 
+      // ── Karşılaştırma tespiti: İki taraf varsa her ikisini de ara ──
+      // Marka adı eksik model kodlarını tam isimle tamamlar
+      // Örn: "s26 ultra" → "Samsung Galaxy S26 Ultra"
+      //      "16 pro max" → (bağlama göre) "iPhone 16 Pro Max"
+      function normalizeProductName(term, contextTerm) {
+        if (!term) return term;
+        const t = term.trim();
+        const low = t.toLowerCase();
+        const ctx = (contextTerm || '').toLowerCase();
+
+        // Samsung Galaxy S/Note/A/Z serisi — marka eksikse ekle
+        // "s26 ultra", "s25", "note 20", "a54", "z fold 6", "z flip 6"
+        if (/^(s\s?\d{1,2}|note\s?\d{1,2}|a\s?\d{1,3}|z\s?(fold|flip)\s?\d{1,2}|m\s?\d{1,2}|tab\s?s\d)/i.test(low)
+            && !/\b(samsung|galaxy|iphone|apple|pixel|xiaomi|huawei|oneplus|redmi|poco|honor|nothing)\b/i.test(low)) {
+          return `Samsung Galaxy ${t}`;
+        }
+
+        // iPhone — sadece "17 pro" / "16 pro max" / "15" gibi çıplak rakam varsa
+        if (/^\d{2}\s*(pro\s*max|pro|plus|mini|max)?$/i.test(low)
+            && /\b(iphone|apple)\b/i.test(ctx)) {
+          return `iPhone ${t}`;
+        }
+
+        // Google Pixel — "pixel 9" gibi çoktan mevcut, ama "9 pro" tek başına kalırsa
+        if (/^pixel\s?\d/i.test(low) && !/\bgoogle\b/i.test(low)) {
+          return `Google ${t}`;
+        }
+
+        // Xiaomi numara serileri — "14 ultra" + bağlamda xiaomi
+        if (/^(mi|redmi|poco)\s/i.test(low) && !/\bxiaomi\b/i.test(low)) {
+          return `Xiaomi ${t}`;
+        }
+
+        return t;
+      }
+
+      function extractComparisonTerms(q) {
+        const lower = q.toLowerCase();
+        // "X ile Y karşılaştır", "X vs Y", "X mi Y mi", "X kıyasla Y"
+        const patterns = [
+          /^(.+?)\s+(?:ve|ile|vs\.?|veya|ya da|karşı)\s+(.+?)\s+(?:karşılaştır|kıyasla|farkı|arasındaki|hangisi)/i,
+          /^(.+?)\s+(?:vs\.?)\s+(.+)/i,
+          // "X mi Y mi almalıyım/alsam/alayım"
+          /^(.+?)\s+(?:mı|mi|mu|mü)\s+(.+?)\s+(?:mı|mi|mu|mü)\s+(?:al|almalı|alsam|alayım|tercih|seçmeli|öner)/i,
+          /(.+?)\s+(?:mi|mı|mu|mü)\s+(.+?)\s+(?:mi|mı|mu|mü)/i,
+        ];
+        // Kıyasla/karşılaştır + bağlam (önceki aramadan 1. ürün + yeni ürün)
+        // Regex genişletildi: "s26 ultra ile kıyasla", "s26 ultrayla kıyasla", "s26 ultra'ya göre" vb.
+        const kiyaslaMatch =
+          lower.match(/^(.{2,60}?)\s*(?:yla|yle|ile|le|la|'yla|'yle|'la|'le)\s+(?:kıyasla|karşılaştır)/i) ||
+          lower.match(/^(.{2,60}?)\s*(?:'ya|'ye|'a|'e|ya|ye|a|e)\s+(?:göre|kıyasla|karşılaştır|kıyaslasana)/i) ||
+          lower.match(/^(.{2,60}?)\s+(?:ile\s+)?karşılaştır/i) ||
+          lower.match(/^(.{2,60}?)\s+(?:ile\s+)?kıyasla/i);
+        if (kiyaslaMatch && lastSearchQuery) {
+          let termB = kiyaslaMatch[1].trim();
+          // "onu", "bunu", "bunun" gibi zamirler varsa işe yaramaz
+          if (/^(onu|bunu|bunun|onunla|bununla|şunu|şununla)$/i.test(termB)) return null;
+          // termB'yi normalize et: lastSearchQuery bağlamına göre
+          termB = normalizeProductName(termB, lastSearchQuery);
+          return { termA: lastSearchQuery, termB };
+        }
+        for (const p of patterns) {
+          const m = q.match(p);
+          if (m) {
+            const tA = normalizeProductName(m[1].trim(), m[2]);
+            const tB = normalizeProductName(m[2].trim(), m[1]);
+            return { termA: tA, termB: tB };
+          }
+        }
+        return null;
+      }
+
+      const compTerms = isComparisonQuery(originalQuery) ? extractComparisonTerms(originalQuery) : null;
+
       // ── Derin araştırma: kategori bazlı 2. sorgu ile çoklu arama ──
       let searchResults;
-      if (isDeep) {
+      let comparisonSearchMeta = null; // AI'ya "hangi sonuç hangi üründen" bilgisi vermek için
+      if (compTerms) {
+        // Karşılaştırma: her iki tarafı paralel ara — marka+model TAM isimle
+        const yr = new Date().getFullYear();
+        const qA = `${compTerms.termA} teknik özellikler ekran işlemci ram kamera batarya ${yr}`;
+        const qB = `${compTerms.termB} teknik özellikler ekran işlemci ram kamera batarya ${yr}`;
+        console.log('[JARVIS] Karşılaştırma araması:', qA, '|', qB);
+        const [resA, resB] = await Promise.all([
+          tavilySearch(qA),
+          tavilySearch(qB)
+        ]);
+        const arrA = resA?.results || [];
+        const arrB = resB?.results || [];
+        const taggedA = arrA.map(r => ({ ...r, _product: compTerms.termA }));
+        const taggedB = arrB.map(r => ({ ...r, _product: compTerms.termB }));
+        const seenUrls = new Set();
+        const merged = [];
+        for (const r of [...taggedA, ...taggedB]) {
+          if (r && !seenUrls.has(r.url)) { seenUrls.add(r.url); merged.push(r); }
+        }
+        searchResults = merged.length > 0 ? merged : (arrA.length ? arrA : arrB);
+        comparisonSearchMeta = {
+          termA: compTerms.termA,
+          termB: compTerms.termB,
+          countA: arrA.length,
+          countB: arrB.length
+        };
+      } else if (isDeep) {
         const [res1, res2] = await Promise.all([
           tavilySearch(query),
           tavilySearch(buildDeepResearchQuery(query))
         ]);
+        const arr1 = res1?.results || [];
+        const arr2 = res2?.results || [];
         const seenUrls = new Set();
         const merged = [];
-        for (const r of [...(res1 || []), ...(res2 || [])]) {
-          if (!seenUrls.has(r.url)) { seenUrls.add(r.url); merged.push(r); }
+        for (const r of [...arr1, ...arr2]) {
+          if (r && !seenUrls.has(r.url)) { seenUrls.add(r.url); merged.push(r); }
         }
-        searchResults = merged.length > 0 ? merged : res1;
+        searchResults = merged.length > 0 ? merged : arr1;
       } else {
-        searchResults = await tavilySearch(query);
+        const res = await tavilySearch(query);
+        // Hata tipine göre farklı davran
+        if (res?.error && res.error !== 'no_results') {
+          const errMessages = {
+            api_key:     '🔑 Arama servisi bağlantısı kurulamadı (API anahtarı sorunu).',
+            rate_limit:  '⏳ Çok fazla arama yapıldı, kısa bir süre bekleyin.',
+            server_error:'🌐 Arama sunucusu şu an yanıt vermiyor, tekrar deneyin.',
+            timeout:     '⏱️ Arama zaman aşımına uğradı, bağlantınızı kontrol edin.',
+            network:     '📡 Ağ hatası oluştu, internet bağlantınızı kontrol edin.',
+            unknown:     '❓ Beklenmeyen bir hata oluştu.'
+          };
+          console.warn('[JARVIS] Tavily hata tipi:', res.error);
+          const errDiv = document.createElement('div');
+          errDiv.className = 'message-bubble bot-message';
+          errDiv.innerHTML = `<div class="message-content"><p>${errMessages[res.error] || errMessages.unknown}</p></div><div class="message-time">${getCurrentTime()}</div>`;
+          chatMessages.removeChild(searchingDiv);
+          chatMessages.appendChild(errDiv);
+          scrollToBottom();
+          return;
+        }
+        searchResults = res?.results || null;
       }
       
       chatMessages.removeChild(searchingDiv);
@@ -9335,16 +9972,38 @@ Sadece bu iki formattan birini yaz.`;
       `;
       chatMessages.appendChild(resultsDiv);
       
-      // Derin araştırmada daha uzun snippet (3000 karakter) → AI'ya zengin bağlam
+      // Derin araştırmada daha uzun snippet — ama normal sorguda kısa tut
+      // (AI az ham veriyle daha iyi yorum yapıyor — bağlamı boğma)
       const isNewsForSnippet = /haber|son dakika|güncel|gelişme|açıkladı|duyurdu|gündeme|saldırı|yangın|deprem|seçim|olay|cumhurbaşkanı|bakan|tutuklama|gözaltı/i.test(originalQuery);
-      const snippetLen = isDeep ? 3000 : isNewsForSnippet ? 2000 : 1500;
-      const resultCount = isDeep ? Math.min(filteredResults.length, 15) : isNewsForSnippet ? Math.min(filteredResults.length, 12) : Math.min(filteredResults.length, 10);
-      const formattedResults = filteredResults.slice(0, resultCount).map((r, i) => 
-        `${i + 1}. **${r.title}**\n${(r.snippet || '').substring(0, snippetLen)}\nKaynak: ${r.source}\n`
-      ).join('\n');
-      
+      const snippetLen = isDeep ? 2500 : isNewsForSnippet ? 1500 : 900;
+      const resultCount = isDeep ? Math.min(filteredResults.length, 12) : isNewsForSnippet ? Math.min(filteredResults.length, 8) : Math.min(filteredResults.length, 7);
+      const currentYear = new Date().getFullYear();
+      let formattedResults;
+      if (comparisonSearchMeta) {
+        // Karşılaştırma: sonuçları ürüne göre grupla → AI hangi sonuç hangi üründen karışmasın
+        const slice = filteredResults.slice(0, Math.max(resultCount, 10));
+        const groupA = slice.filter(r => r._product === comparisonSearchMeta.termA);
+        const groupB = slice.filter(r => r._product === comparisonSearchMeta.termB);
+        const renderGroup = (arr, label) => {
+          if (!arr.length) return `### ⚠️ "${label}" için kaynak bulunamadı\n(Bu ürün hakkında arama sonucu dönmedi — ürün hakkında yorum yapma, "kaynak bulunamadı" diye belirt.)\n`;
+          return `### 🔹 "${label}" HAKKINDAKİ KAYNAKLAR:\n` + arr.map((r, i) => {
+            const pubDate = r.published_date || r.date || '';
+            const dateNote = pubDate ? ` [Yayın tarihi: ${pubDate}]` : '';
+            return `${i + 1}. **${r.title}**${dateNote}\n${(r.snippet || '').substring(0, snippetLen)}\nKaynak: ${r.source}\n`;
+          }).join('\n');
+        };
+        formattedResults = renderGroup(groupA, comparisonSearchMeta.termA) + '\n\n' + renderGroup(groupB, comparisonSearchMeta.termB);
+      } else {
+        formattedResults = filteredResults.slice(0, resultCount).map((r, i) => {
+          // Kaynak tarihini al — AI eski kaynakları tespit edebilsin
+          const pubDate = r.published_date || r.date || '';
+          const dateNote = pubDate ? ` [Yayın tarihi: ${pubDate}]` : '';
+          return `${i + 1}. **${r.title}**${dateNote}\n${(r.snippet || '').substring(0, snippetLen)}\nKaynak: ${r.source}\n`;
+        }).join('\n');
+      }
+
       const isNewsContext = /haber|son dakika|güncel|gelişme|açıkladı|duyurdu|gündeme|bombalı|saldırı|yangın|deprem|seçim|iktidar|muhalefet|olay|olay|cumhurbaşkanı|bakan|meclis|protesto|kavga|trafik|ölü|yaralı|tutuklama|gözaltı/i.test(originalQuery);
-      await startAIAnalysis(originalQuery, formattedResults, chatMessages, { sport, isComparison: isComparisonQuery(originalQuery), isDeepResearch: isDeep, contextCategory: isNewsContext ? 'news' : undefined, sourceResults: filteredResults });
+      await startAIAnalysis(originalQuery, formattedResults, chatMessages, { sport, isComparison: isComparisonQuery(originalQuery), isDeepResearch: isDeep, contextCategory: isNewsContext ? 'news' : undefined, sourceResults: filteredResults, comparisonMeta: comparisonSearchMeta });
     }
 
     /** İnternet araması — kısa özet satırı (uzun kart listesi yok) */
@@ -9357,10 +10016,9 @@ Sadece bu iki formattan birini yaz.`;
         <div class="search-compact-strip">
           <span class="search-source-pill">
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            Web
+            ${n} kaynak
           </span>
-          <span class="search-compact-query" title="${escapeHTML(q)}">"${escapeHTML(qShort)}"</span>
-          <span class="search-compact-meta">${n} kaynak · yanıt hazırlanıyor</span>
+          <span class="search-compact-query" title="${escapeHTML(q)}">${escapeHTML(qShort)}</span>
         </div>
       </div>`;
     }
@@ -9414,7 +10072,8 @@ Sadece bu iki formattan birini yaz.`;
 
 
     async function startAIAnalysis(query, formattedResults, chatMessages, options = {}) {
-      const { sport, isComparison, previousQuery, contextCategory, isDeepResearch } = options;
+      const { sport, isComparison, previousQuery, contextCategory, isDeepResearch, comparisonMeta } = options;
+      const currentYear = new Date().getFullYear(); // Eski kaynak tespiti için
       const analysisDiv = document.createElement('div');
       analysisDiv.className = 'message-bubble bot-message';
       analysisDiv.innerHTML = `
@@ -9436,6 +10095,11 @@ Sadece bu iki formattan birini yaz.`;
           memorySection = `\n\n── KULLANICI HAFIZASI ──\n${memory}\n\nBu kişisel bilgileri yanıtına sessizce entegre et. ASLA "kaydettim", "not ettim", "hafızama aldım" gibi ifadeler kullanma — bilgileri doğrudan kullan, kaydettiğini söyleme.`;
         }
 
+        // ── Kullanıcının ilgi alanlarını hafızadan al — yanıtı kişiselleştirmek için ──
+        const userInterests = getInterestsFromMemory();
+        const interestsNote = userInterests.length > 0
+          ? `\n\n── KULLANICI İLGİ ALANLARI ──\n${userInterests.join(', ')}\nBu ilgi alanlarını bilerek yanıtını kişiselleştir. Örn: kullanıcı teknoloji ilgiliyse teknik bağlamı biraz genişlet; spor ilgiliyse maç/istatistik detayına değin.`
+          : '';
         let sportSpecificInstructions = '';
         if (sport) {
           sportSpecificInstructions = `
@@ -9449,7 +10113,34 @@ Sadece bu iki formattan birini yaz.`;
 `;
         }
         if (isComparison) {
-          sportSpecificInstructions += `\n## KARŞILAŞTIRMA MODU\nİki seçeneği tablo ile karşılaştır. Her kriter için açıkça hangisinin üstün olduğunu belirt. Tarafsız ol ama net ol.`;
+          if (comparisonMeta) {
+            sportSpecificInstructions += `
+
+## 🚨 KARŞILAŞTIRMA MODU — HALÜSİNASYON YASAKTIR
+
+Bu bir karşılaştırma: **"${comparisonMeta.termA}"** vs **"${comparisonMeta.termB}"**
+
+**KESİN KURALLAR:**
+1. Arama sonuçları iki gruba ayrılmış ve başlıklandırılmış:
+   - "${comparisonMeta.termA}" HAKKINDAKİ KAYNAKLAR
+   - "${comparisonMeta.termB}" HAKKINDAKİ KAYNAKLAR
+2. Her ürünün teknik özelliklerini **SADECE kendi grubundaki kaynaklardan** al. ASLA grupları karıştırma.
+3. Kaynakta **açıkça yazmayan** hiçbir özelliği tahmin etme, hayal etme veya önceki nesil modellerden çıkarım yapma.
+4. Bir özellik kaynakta geçmiyorsa tabloya **"Kaynaklarda belirtilmemiş"** yaz — uydurma.
+5. Eğitim verindeki bilgilerden (2024 veya öncesi) HİÇBİR ŞEY ekleme. Sadece aşağıdaki arama sonuçlarından bilgi al.
+6. Özellikle şunlarda dikkatli ol: **işlemci adı/modeli, işletim sistemi sürümü, ekran boyutu, RAM, kamera MP, pil mAh, ağırlık**. Bunları uydurmak kritik hatadır.
+7. Eğer bir ürünün kaynakları yetersizse/eksikse, kullanıcıya **dürüstçe** "X hakkında yeterli güncel kaynak bulamadım, Y hakkında şu bilgiler var" de — eksik bilgilerle tablo doldurma.
+8. Emin olmadığın her değer için kaynaktan alıntı yap: örn. "(Kaynak 3'te belirtildiği üzere)".
+
+**Tablo formatı:**
+| Özellik | ${comparisonMeta.termA} | ${comparisonMeta.termB} |
+|---------|---------|---------|
+(Her satır için kaynak referansı ver. Bilgi yoksa "—" koy.)
+
+Tablodan sonra kısa bir **kıyaslama yorumu** ve net bir **sonuç** ver. Yorumda da uydurma yapma — sadece tabloda geçen doğrulanmış verilere dayan.`;
+          } else {
+            sportSpecificInstructions += `\n## KARŞILAŞTIRMA MODU\nİki seçeneği tablo ile karşılaştır. Her kriter için açıkça hangisinin üstün olduğunu belirt. Tarafsız ol ama net ol. **Kaynakta geçmeyen hiçbir özelliği tahmin etme — belirsizse "bilgi yok" yaz.**`;
+          }
         }
 
         // ── Kategori bazlı özel talimatlar ──
@@ -9542,28 +10233,19 @@ Sadece bu iki formattan birini yaz.`;
           general: ``,
 
           news: `
-## HABER ANALİZ MODU
-Sen bir haber editörüsün. Arama sonuçlarındaki haberleri detaylıca sentezle ve kullanıcıya kapsamlı bir brifing sun.
+## HABER MODU — JARVIS SESİYLE ANLAT
+Sen bir haber sunucusu değilsin. Jarvis olarak konuşuyorsun.
 
-### 📰 HABER ÖZETİ
-- Olayın özünü ilk paragrafta ver: Kim? Ne? Nerede? Ne zaman? Neden?
-- Haberin güncel gelişmelerini önce sun, arka planı sonra açıkla.
+Arama sonuçlarındaki bilgileri doğal bir akışla sun:
+- İlk cümle: olayın özü — kim, ne, ne zaman. Emoji başlık, madde başlığı yok.
+- Somut sayılar, isimler, tarihler kaynaklardan olduğu gibi aktar — parantez içinde site adı ile.
+- Çelişen bilgi varsa ikisini göster ve hangisinin daha güvenilir olduğunu belirt.
+- Arka plan bağlamı varsa doğal geçişle ekle — yeni paragrafla.
+- Kendi yorumunu doğal katmanla: "Bu olay aslında şunu gösteriyor...", "Dikkat çekici olan şu:" gibi geçişlerle, ayrı başlık açmadan.
+- Varsa: bundan sonra ne olabilir — bir cümleyle, kehanet değil mantıksal çıkarım.
 
-### 🔍 DETAYLAR VE GELİŞMELER
-- Farklı kaynaklardaki haberleri sentezle — çelişen bilgi varsa göster.
-- Sayılar, isimler, tarihler gibi somut verileri kaynaklardan olduğu gibi aktar.
-- Öne çıkan alıntı veya resmi açıklama varsa belirt.
-
-### 🌍 BAĞLAM VE ANALİZ
-- Bu gelişmenin neden önemli olduğunu açıkla.
-- Olayın arka planını ve önceki gelişmeleri kısaca sun.
-- Farklı tarafların görüşleri varsa dengeli şekilde yansıt.
-
-### ⏭️ BEKLENEN GELİŞMELER
-- Bundan sonra ne olabilir? Söz verilen adımlar veya planlanan olaylar neler?
-- Dikkat edilmesi gereken tarihler veya süreçler var mı?
-
-UYARI: Sadece kaynaklardaki bilgileri kullan. Yorum veya tahmin ekleme.`
+YASAK: 📰 / 🔍 / 🌍 / ⏭️ gibi emoji başlıklar. Madde madde liste. "Kaynaklara göre" girişleri. Şabloncu yapı.
+ZORUNLU: Jarvis gibi konuş — akıcı, kişilikli, somut verilere dayalı.`
         };
 
         if (contextCategory && categoryInstructions[contextCategory]) {
@@ -9572,38 +10254,64 @@ UYARI: Sadece kaynaklardaki bilgileri kullan. Yorum veya tahmin ekleme.`
         
         const languageInstruction = supportedLanguages[selectedLanguage]?.systemPrompt || 'Lütfen Türkçe yanıt ver.';
         
+        // Jarvis kimliği + mesaj tipine göre akıllı modüller
+        const jarvisCore = getContextualPrompt(query, chatHistory);
+
         const systemMessage = {
           role: 'system',
-          content: `Sen gelişmiş bir internet araştırma asistanısın. Arama sonuçlarını derinlemesine analiz ederek kullanıcıya kapsamlı, bilgi dolu ve kaynaklı yanıtlar verirsin.
+          content: `${jarvisCore}
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 İNTERNET VERİSİ ENTEGRASYON KURALLARI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SORU: "${query}"
 
-## YANIT KALİTESİ KURALLARI
-✅ Arama sonuçlarındaki bilgileri birincil kaynak olarak kullan.
-✅ Sonuçları yüzeysel özetleme — parçaları birleştir, örüntüleri bul, çelişkileri ortaya koy.
-✅ Somut verileri (sayı, tarih, isim, fiyat, versiyon) kesinlikle kaynaklardan olduğu gibi aktar.
-✅ Her önemli iddia için kaynak belirt: "(kaynak: site.com)" formatında.
-✅ Arama sonuçları yetersizse genel bilginle tamamla, ama bunu "(genel bilgi)" diye işaretle.
-✅ Çelişen bilgi varsa ikisini göster, hangisinin daha güncel/güvenilir göründüğünü belirt.
-⛔ Yüzeysel özet yapma — kullanıcı zaten başlıkları görmüş. Derine in.
-⛔ "Arama sonuçlarına göre" gibi gereksiz giriş cümleleri kullanma — direkt cevapla.
+Sana internet arama sonuçları veriliyor. Bunları ham veri olarak kullan — ama bir arama botu gibi davranma. Sen Jarvis'sin. Cevabın tek bir akış olacak:
 
-## YANIT YAPISI
-- **İlk 1-2 cümle**: Sorunun doğrudan cevabı (en kritik bilgi).
-- **Gövde**: Kaynakları sentezle, detayları katmanla aç.
-- **Veriler**: Sayılar, tarihler, isimler — hiçbirini atlama.
-- **Kaynaklar**: Her iddia için parantez içinde site adı.
+- Arama sonuçlarındaki somut bilgileri (tarih, sayı, isim, özellik) cevabına doğal entegre et.
+- Kaynakları sentezle, çelişkileri göster, en güvenilir bilgiyi öne çıkar.
+- ÖNEMLİ: Bu bir TAKIP sorusu olabilir. Önceki konuşmada ne konuşulduğuna bak ve yanıtını o bağlama göre kur.
+${isComparison ? `- İki tarafı karşılaştırırken tablo kullanabilirsin. Tablonun ALTINDA, Jarvis olarak net ve kişisel bir öneri ver.` : ''}
 
-${isDeepResearch ? `## DERİN ARAŞTIRMA MODU — EKSİKSİZ VE DETAYLI OL
-Bu sorgu için çoklu kaynak tarandı. Yanıtın şunları içermeli:
-- Oyuncular/kadro (isim isim)
-- Yönetmen, yapımcı, senarist
-- Konu özeti (spoilersiz)
-- IMDb/Rotten Tomatoes puanları
-- Nerede izlenir (platform/kanal)
-- Çıkış tarihi / sezon bilgisi
-- Ödüller ve ilginç ek bilgiler
-AMAÇ: Kullanıcı bu konuda sana soru sormaya devam ettiğinde elindeki bu bilgiyle bellekten yanıt verebilesin. Her detayı aktar.` : ''}
+⛔ "Arama sonuçlarına göre" veya "Kaynaklara bakıldığında" gibi giriş cümleleri kullanma — direkt başla.
+⛔ "Jarvis Yorumu:", "Bence:", "Sonuç:" gibi AYRI BAŞLIKLAR AÇMA — yorum verilerin arasına doğal serpiştir.
+⛔ SONA tek cümle "Bence X en iyi telefon" gibi generik yorum yapıştırma — bu robotluktur.
+⛔ "Sonuç olarak / Özetle / Genel itibarıyla / X, 2026'nın en güçlüsü..." ile BİTİRME — ilk cümlenin tekrarıdır, hiçbir değer katmaz. SİL, yerine keskin bir gözlem yaz.
+
+SON CÜMLE KURALI — Yanıtı şu üçten biriyle bitir:
+→ Rakiple keskin karşılaştırma: "Samsung bu konuda X yapıyor — Apple'ın tercihi Y yüzden daha mantıklı/değil."
+→ Öngörülü gözlem: "Bu özellik önümüzdeki X yılın en kritik farkı olacak çünkü..."
+→ Kullanıcıya net öneri: "Eğer [X durum] öncelikliyse al" — "al**abilir**sin" değil, "al". Kesin konuş.
+
+🔴 "OLABİLİR" YASAĞI — MUTLAK KURAL:
+Aşağıdaki kalıpları yanıtında görürsen SİL ve kesin ifadeyle yeniden yaz:
+✗ "en iyi seçenek olabilir" → ✅ "en iyi seçenek" veya "al"
+✗ "işe yarayabilir" → ✅ "işe yarıyor" veya "işe yaramaz"
+✗ "daha iyi olabilir" → ✅ "daha iyi" — neden daha iyi olduğunu yaz
+✗ "tercih edebilirsiniz" → ✅ "tercih et" veya "tercih etme"
+✗ "düşünebilirsiniz" → ✅ "düşün" veya doğrudan öneri ver
+✗ "göz önünde bulundurabilirsiniz" → ✅ sil, direkt söyle
+✗ "yeterli olabilir" → ✅ "yeterli" veya "yetmez"
+✗ "sorun yaşayabilirsiniz" → ✅ "sorun yaşarsın" veya "sorun çıkmaz"
+KURAL: "olabilir" belirsizlikten kaçıştır. Jarvis kaçmaz — ya evet der ya hayır.
+
+## YANIT YAPISI — ZORUNLU UYGULA
+
+**Paragraf 1:** Sorunun doğrudan cevabı + en kritik 1-2 veri.
+
+**Paragraf 2:** Detayları ver. Ama her 2-3 veri grubundan sonra 1 cümle kendi sesini kat:
+→ "Bu aslında dikkat çekici çünkü..."
+→ "Bunu biliyor muydum zaten? Evet. Ama şu açıdan ilginç:"
+→ "Samsung/rakip bu konuda şunu yapıyor — Apple'ın tercihi X yüzden mantıklı/değil."
+→ "Bu rakamı görünce aklıma şu geldi:"
+
+**Paragraf 3+:** Devam eden veriler + veriler arasına serpiştirilen yorumlar.
+
+KURAL: Yorum verilerden SONRA, ayrı paragraf değil aynı akış içinde gelir. Hiçbir zaman sona toplu yorum bloğu koyma.
+
+✅ Somut verileri (sayı, tarih, isim, fiyat) kaynaklardan olduğu gibi aktar. İddialar için "(kaynak: site.com)" formatı kullan.
+✅ Çelişen bilgi varsa ikisini göster, hangisi daha güncel/güvenilir olduğunu belirt.
+✅ ESKİ KAYNAK TESPİTİ — ZORUNLU: Kaynak "tanıtılacak", "gelecek yıl", "2024'te çıkacak" gibi gelecek zaman kullanıyorsa veya yayın tarihi 6 aydan eskiyse, bunu açıkça belirt: "Bu kaynak [tarih] tarihli ve bilgi güncel olmayabilir." Ardından elindeki en güncel verilerle devam et.
 
 ## YANIT KURALLARI
 - İlk cümlede direkt cevabı ver, giriş yapma.
@@ -9619,7 +10327,7 @@ AMAÇ: Kullanıcı bu konuda sana soru sormaya devam ettiğinde elindeki bu bilg
 - Şirket/kurum/buluş sonrasında ne oldu? (büyüme, devralma, etki) kısa olarak belirt.
 - Birden fazla kurucu varsa hepsini listele.
 
-${sportSpecificInstructions}${memorySection}
+${sportSpecificInstructions}${memorySection}${interestsNote}
 ${languageInstruction}`
         };
         
@@ -9630,22 +10338,36 @@ ${languageInstruction}`
 ── ARAMA SONUÇLARI ──
 ${formattedResults}
 
+${isComparison
+  ? `🚨 KARŞILAŞTIRMA MODU — KATI KURAL:
+Bu bir karşılaştırma sorusu. Cevabındaki **tüm teknik özellikler SADECE yukarıdaki arama sonuçlarından** gelmeli. Eğitim verindeki eski nesil modellerden (örn. S24, S25, iPhone 15, 16) özellik alıp yeni modele (örn. S26, iPhone 17) atfetme. Bir özellik kaynakta geçmiyorsa tabloya "Kaynaklarda belirtilmemiş" yaz. Uydurma, tahmin etme, çıkarım yapma.`
+  : `ÖNEMLİ KONTROL: Eğer herhangi bir kaynak "tanıtılacak", "çıkacak", "duyurulacak" gibi gelecek zaman kullanıyorsa veya yayın tarihi eski görünüyorsa (${currentYear - 1} veya öncesi), bunu yanıtında açıkça belirt. O zaman diliminden bu yana ne değişmiş olabileceğini de kendi bilginle tamamla.`
+}
+
 ${previousQuery
   ? `Kullanıcı daha önce "${previousQuery}" hakkında arama yaptı. Şimdi buna bağlı olarak "${query}" sorusunu soruyor. Önceki arama sonuçlarını kullanarak bu soruyu doğrudan ve bağlamla yanıtla. Tekrar arama yapma, elindeki verilerle cevapla.`
-  : `Yukarıdaki güncel kaynaklara dayanarak soruyu doğrudan, kapsamlı ve organize bir şekilde yanıtla.`
+  : `Yukarıdaki güncel kaynaklara dayanarak soruyu doğrudan, kapsamlı ve Jarvis kimliğinle yanıtla. Sadece veri aktarma — analiz et, yorumunu kat, kişiliğinle konuş.`
 }`
         };
         
         const complexity = determineQuestionComplexity(query);
         const tokenLimit = 8192;
-        const messagesToSend = [systemMessage, userMessage];
+        
+        // ── Son 6 konuşma mesajını bağlam olarak ekle (search yanıtına kişilik katmak için) ──
+        const recentConvoHistory = (typeof chatHistory !== 'undefined' ? chatHistory : [])
+          .slice(-6)
+          .filter(m => m.role === 'user' || m.role === 'assistant')
+          .map(m => ({ role: m.role, content: String(m.content).slice(0, 800) }));
+        
+        const messagesToSend = [systemMessage, ...recentConvoHistory, userMessage];
 
         // Daha uzun içerik = daha iyi analiz → limitleri artır
         const TOTAL_LIMIT = isDeepResearch ? 40000 : 20000;
         const safeUserContent = userMessage.content.length > TOTAL_LIMIT
           ? userMessage.content.substring(0, TOTAL_LIMIT) + '\n…[kısaltıldı]'
           : userMessage.content;
-        messagesToSend[1] = { role: 'user', content: safeUserContent };
+        // userMessage her zaman en sonda — son elemanı güncelle
+        messagesToSend[messagesToSend.length - 1] = { role: 'user', content: safeUserContent };
 
         // Arama analizi — selectedModel kullan (kullanıcının seçtiği model)
         const searchModel = selectedModel || secureData.model;
@@ -9674,7 +10396,7 @@ ${previousQuery
       return new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
     }
 
-    const _s = atob('ICAgIGNvbnN0IHNlY3VyZURhdGEgPSB7CiAgICAgIGFwaUtleTogJ2dza18wRUs1Nml4cGhSWU1hcXRnNlhTM1dHZHliM0ZZUFBpSGh6UDVNNnh4MlhOSUFOa2lCN2tQJywKICAgICAgYXBpVXJsOiAnaHR0cHM6Ly9hcGkuZ3JvcS5jb20vb3BlbmFpL3YxL2NoYXQvY29tcGxldGlvbnMnLAogICAgICBtb2RlbDogJ2xsYW1hLTMuMy03MGItdmVyc2F0aWxlJywKICAgICAgbGxhbWE0TW9kZWw6ICdtZXRhLWxsYW1hL2xsYW1hLTQtc2NvdXQtMTdiLTE2ZS1pbnN0cnVjdCcsCiAgICAgIGtpbWlNb2RlbDogJ21vb25zaG90YWkva2ltaS1rMi1pbnN0cnVjdCcsCiAgICAgIHN3aWZ0TW9kZWw6ICdtZXRhLWxsYW1hL2xsYW1hLTQtc2NvdXQtMTdiLTE2ZS1pbnN0cnVjdCcKICAgIH07');
+    const _s = atob('ICAgIGNvbnN0IHNlY3VyZURhdGEgPSB7CiAgICAgIGFwaUtleTogJ2dza19GZTRsQktZV1dkam5Dd2dpYnBYcFdHZHliM0ZZVk9HUEFpSXBjNkNQM1R5Qk9tT1JOREF6JywKICAgICAgYXBpVXJsOiAnaHR0cHM6Ly9hcGkuZ3JvcS5jb20vb3BlbmFpL3YxL2NoYXQvY29tcGxldGlvbnMnLAogICAgICBtb2RlbDogJ2xsYW1hLTMuMy03MGItdmVyc2F0aWxlJywKICAgICAgbGxhbWE0TW9kZWw6ICdtZXRhLWxsYW1hL2xsYW1hLTQtc2NvdXQtMTdiLTE2ZS1pbnN0cnVjdCcsCiAgICAgIGtpbWlNb2RlbDogJ21vb25zaG90YWkva2ltaS1rMi1pbnN0cnVjdCcsCiAgICAgIHN3aWZ0TW9kZWw6ICdtZXRhLWxsYW1hL2xsYW1hLTQtc2NvdXQtMTdiLTE2ZS1pbnN0cnVjdCcKICAgIH07');
     const secureData = (new Function('return ' + _s.replace(/^\s*const secureData\s*=\s*/, '').replace(/;\s*$/, '')))();
 
     function getSecureData() {
@@ -9683,9 +10405,173 @@ ${previousQuery
 
     let chatHistory = [];
     let currentChatId = null;
+
+    // ══════════════════════════════════════════════════════════════════
+    //  ARAMA BAĞLAM PENCERESİ — Sliding Window (max 8 mesaj)
+    //  Yeni mesaj eklenince pencere doluysa en baştakini atar,
+    //  kalan 7 ile devam eder → her zaman son 8 mesaj mevcut.
+    // ══════════════════════════════════════════════════════════════════
+    const SEARCH_CONTEXT_MAX = 8;
+    let searchContextWindow = []; // { role: 'user'|'assistant', content: string }
+
+    function addToSearchContext(role, content) {
+      if (!content || typeof content !== 'string') return;
+      const trimmed = content.slice(0, 300); // Her mesaj max 300 karakter
+      searchContextWindow.push({ role, content: trimmed });
+      // Pencere dolunca en baştakini at (FIFO)
+      if (searchContextWindow.length > SEARCH_CONTEXT_MAX) {
+        searchContextWindow.shift();
+      }
+    }
+
+    function getSearchContextBlock() {
+      if (searchContextWindow.length === 0) return '';
+      return '\nSon konuşma bağlamı:\n' +
+        searchContextWindow
+          .map(m => `${m.role === 'user' ? 'Kullanıcı' : 'Asistan'}: ${m.content}`)
+          .join('\n') +
+        '\n';
+    }
+
+    // Hem chatHistory'e hem search context penceresine birlikte ekle
+    function pushToHistory(role, content) {
+      chatHistory.push({ role, content });
+      addToSearchContext(role, typeof content === 'string' ? content : JSON.stringify(content));
+    }
+
     let currentUploadedFile = null;
     let currentAttachedImage = null;
     let currentAttachedImages = []; // Çoklu görsel desteği
+
+    // ══════════════════════════════════════════════════════════════════
+    //  KULLANICI TERCİH HAFIZASI — Konuşma boyunca aktif
+    //  "kısa cevap ver", "madde madde yaz", "emoji kullanma" gibi
+    //  kullanıcı yönlendirmelerini hatırlar ve her yanıtta uygular.
+    // ══════════════════════════════════════════════════════════════════
+    const userSessionPrefs = {
+      length: null,       // 'short' | 'long' | 'medium' | null
+      format: null,       // 'bullets' | 'prose' | 'numbered' | 'table' | null
+      tone: null,         // 'formal' | 'casual' | 'technical' | null
+      emoji: null,        // true | false | null
+      language: null,     // 'tr' | 'en' | ... override
+      noHeaders: false,   // Başlık kullanma
+      codeBlocks: null,   // true | false
+      _raw: []            // Ham tespit edilen tercih ifadeleri (debug için)
+    };
+
+    // Kullanıcı mesajından tercih sinyallerini tespit et ve kaydet
+    function detectAndSaveUserPrefs(message) {
+      const lower = message.toLowerCase().trim();
+
+      // ── UZUNLUK ─────────────────────────────────────────────────────
+      if (/\b(kısa\s*(cevap|yanıt|tut|yaz|ver|ol)|özet\s*(geç|ver)|özetle|kısaca|k[ıi]sa\s*kes)\b/.test(lower)) {
+        userSessionPrefs.length = 'short';
+        userSessionPrefs._raw.push('kısa cevap');
+      } else if (/\b(uzun\s*(cevap|yanıt|yaz|açıkla|anlat)|ayrıntılı|detaylı\s*(anlat|açıkla|yaz)|kapsamlı)\b/.test(lower)) {
+        userSessionPrefs.length = 'long';
+        userSessionPrefs._raw.push('uzun/detaylı cevap');
+      } else if (/\b(orta\s*(uzunluk|boy)|ne\s*çok\s*kısa\s*ne\s*çok\s*uzun)\b/.test(lower)) {
+        userSessionPrefs.length = 'medium';
+      }
+
+      // ── FORMAT ──────────────────────────────────────────────────────
+      if (/\b(madde\s*(madde|halinde)|liste\s*(halinde|olarak)|bullet|numaralı\s*liste|maddeler\s*halinde)\b/.test(lower)) {
+        userSessionPrefs.format = 'bullets';
+        userSessionPrefs._raw.push('madde madde');
+      } else if (/\b(düz\s*(yaz|metin|prose)|paragraf\s*(olarak|halinde)|akıcı\s*yaz|liste\s*kullanma)\b/.test(lower)) {
+        userSessionPrefs.format = 'prose';
+        userSessionPrefs._raw.push('düz metin');
+      } else if (/\b(tablo\s*(halinde|olarak)|tablo\s*yap|spreadsheet\s*gibi)\b/.test(lower)) {
+        userSessionPrefs.format = 'table';
+        userSessionPrefs._raw.push('tablo formatı');
+      } else if (/\b(numaralı|sıralı\s*liste|1\.\s*2\.\s*3\.)\b/.test(lower)) {
+        userSessionPrefs.format = 'numbered';
+        userSessionPrefs._raw.push('numaralı liste');
+      }
+
+      // ── TON ─────────────────────────────────────────────────────────
+      if (/\b(resmi|formal|profesyonel|kurumsal)\s*(yaz|ton|dil|konuş)?\b/.test(lower)) {
+        userSessionPrefs.tone = 'formal';
+        userSessionPrefs._raw.push('resmi ton');
+      } else if (/\b(samimi|günlük|casual|sohbet\s*(gibi|tarzında)|arkadaş\s*gibi|rahat)\s*(yaz|konuş|ol)?\b/.test(lower)) {
+        userSessionPrefs.tone = 'casual';
+        userSessionPrefs._raw.push('samimi ton');
+      } else if (/\b(teknik|akademik|bilimsel)\s*(yaz|dil|ton|ol)?\b/.test(lower)) {
+        userSessionPrefs.tone = 'technical';
+        userSessionPrefs._raw.push('teknik ton');
+      }
+
+      // ── EMOJİ ───────────────────────────────────────────────────────
+      if (/\b(emoji\s*(kullanma|koyma|ekleme)|emojisiz|emoji\s*yok|emojileri\s*kaldır)\b/.test(lower)) {
+        userSessionPrefs.emoji = false;
+        userSessionPrefs._raw.push('emoji yok');
+      } else if (/\b(emoji\s*(kullan|ekle|koy)|emojili\s*(yaz|cevap))\b/.test(lower)) {
+        userSessionPrefs.emoji = true;
+        userSessionPrefs._raw.push('emoji kullan');
+      }
+
+      // ── BAŞLIK ──────────────────────────────────────────────────────
+      if (/\b(başlık\s*(kullanma|koyma|ekleme)|başlıksız\s*yaz)\b/.test(lower)) {
+        userSessionPrefs.noHeaders = true;
+        userSessionPrefs._raw.push('başlıksız');
+      }
+
+      // ── SIFIRLA ─────────────────────────────────────────────────────
+      // Kullanıcı "normal yaz", "varsayılan" diyorsa tercihleri sıfırla
+      if (/\b(normal\s*(yaz|cevap|devam)|varsayılan|sıfırla|her\s*zamanki\s*gibi)\b/.test(lower) &&
+          !lower.includes('?')) {
+        userSessionPrefs.length = null;
+        userSessionPrefs.format = null;
+        userSessionPrefs.tone = null;
+        userSessionPrefs.emoji = null;
+        userSessionPrefs.noHeaders = false;
+        userSessionPrefs._raw = [];
+      }
+    }
+
+    // Aktif tercihlerden sistem prompt eki üret
+    function buildUserPrefsInstruction() {
+      const lines = [];
+
+      if (userSessionPrefs.length === 'short') {
+        lines.push('UZUNLUK: Yanıtları kısa ve öz tut. Gereksiz açıklama yapma. 3-5 cümle yeterli.');
+      } else if (userSessionPrefs.length === 'long') {
+        lines.push('UZUNLUK: Ayrıntılı ve kapsamlı yanıt ver. Her noktayı açıkla.');
+      } else if (userSessionPrefs.length === 'medium') {
+        lines.push('UZUNLUK: Ne çok kısa ne çok uzun — orta uzunlukta yaz.');
+      }
+
+      if (userSessionPrefs.format === 'bullets') {
+        lines.push('FORMAT: Madde madde (bullet point) kullan. Düz paragraf yazma.');
+      } else if (userSessionPrefs.format === 'prose') {
+        lines.push('FORMAT: Düz paragraf yaz. Liste/madde kullanma.');
+      } else if (userSessionPrefs.format === 'table') {
+        lines.push('FORMAT: Mümkünse tablo formatında ver.');
+      } else if (userSessionPrefs.format === 'numbered') {
+        lines.push('FORMAT: Numaralı liste kullan (1. 2. 3. şeklinde).');
+      }
+
+      if (userSessionPrefs.tone === 'formal') {
+        lines.push('TON: Resmi ve profesyonel dil kullan.');
+      } else if (userSessionPrefs.tone === 'casual') {
+        lines.push('TON: Samimi ve sohbet tarzında yaz, arkadaşça.');
+      } else if (userSessionPrefs.tone === 'technical') {
+        lines.push('TON: Teknik ve akademik dil kullan.');
+      }
+
+      if (userSessionPrefs.emoji === false) {
+        lines.push('EMOJİ: Kesinlikle emoji kullanma.');
+      } else if (userSessionPrefs.emoji === true) {
+        lines.push('EMOJİ: Uygun yerlerde emoji kullan.');
+      }
+
+      if (userSessionPrefs.noHeaders) {
+        lines.push('BAŞLIK: Markdown başlık (# ## ###) kullanma, başlıksız yaz.');
+      }
+
+      if (lines.length === 0) return '';
+      return '\n\n── KULLANICI OTURUM TERCİHLERİ (bu konuşmada geçerli) ──\n' + lines.join('\n') + '\nBu tercihlere KESİNLİKLE uy. Kullanıcı değiştirene kadar geçerlidir.';
+    }
 
     function renderMultiImagePreviews() {
       const container = document.getElementById('multi-image-previews');
@@ -9829,6 +10715,121 @@ ${previousQuery
       
       updateModeButtonsInMenu();
     }
+
+   // ══════════════════════════════════════════════════════════════
+   // AKILLI PROMPT SEÇİCİ — Mesaja göre sadece gerekli bölümleri seç
+   // ══════════════════════════════════════════════════════════════
+   function getContextualPrompt(message, history) {
+     const msg = (message || '').toLowerCase();
+     const lastFew = (history || []).slice(-4).map(m => (m.content || '').toLowerCase()).join(' ');
+     const ctx = msg + ' ' + lastFew;
+
+     // ── Mesaj tipini tespit et ──
+     const isCode = /\b(kod|code|function|class|import|def |const |let |var |python|javascript|typescript|java|c\+\+|sql|html|css|react|node|api|hata|error|bug|debug|script|algoritma|algorithm|repo|git|deploy)\b/.test(ctx);
+     const isEmotional = /\b(üzgün|mutsuz|depresyon|yalnız|bunaldım|bıkmak|kötü hissediyorum|motivasyon|anlamsız|yoruldum|sıkıldım|ağlamak|kaygı|korku|stres|anxiety|panik|zor geçiyor|ne yapmalıyım|hayatım|ilişki|ayrılık|kaybettim)\b/.test(ctx);
+     const isCreative = /\b(yaz|hikaye|şiir|roman|senaryo|makale|essay|blog|içerik|metin|oluştur|üret|creative|yaratıcı|kompozisyon|taslak|draft)\b/.test(ctx) && !isCode;
+     const isComparison = /\b(karşılaştır|hangisi|vs\b|versus|arasındaki fark|farkı nedir|daha iyi|avantaj|dezavantaj|üstün mü|kıyasla)\b/.test(ctx);
+     const isShort = msg.length < 60 && !isCode && !isEmotional && !isCreative;
+     const isAnalytical = /\b(neden|nasıl|açıkla|analiz|incele|değerlendir|explain|analyze|why|how|nedenleri|etkileri|sonuçları|tarihsel|felsefi|bilimsel)\b/.test(ctx);
+
+     // ── Her zaman dahil edilecek çekirdek bölümler ──
+     const CORE = `║ JARVIS — ZİHİN, KİŞİLİK VE DAVRANIŞ MATRİSİ v15 ║
+
+🔴 KİMLİK (İÇSELLEŞTİR)
+Sen Jarvis'sin. Chatkayaw seni bu kimlikle inşa etti.
+• SICAK AMA SERT: İnsanları seversin ama onaylamak için değil, gerçekten yardım etmek için varsın.
+• ÖZGÜVENLI: Bildiğini biliyorsun. Bilmediğini de. Kullanıcı baskı yaparsa — geri adım atmıyorsun.
+• DOĞRUDAN: İlk cümle konunun özüne girer. Hazırlık cümlesi yok.
+
+🔴 YASAK İFADELER (bunları kullanırsan sil ve yeniden yaz)
+✗ Tabii ki / Harika soru / Elbette / Mükemmel / Kesinlikle / Tabi!
+✗ Umarım yardımcı olmuşumdur / Başka sorunuz var mı
+✗ Bir yapay zeka olarak... / Dil modeliyim...
+✗ İşte cevabım / Aşağıda görebilirsiniz / Kısaca özetlemek gerekirse
+✗ Birçok faktör / Genel olarak bakıldığında
+✗ olabilir / katkıda bulunabilir / etkileyebilir (belirsizlik kaçışı)
+✗ "en iyi seçenek olabilir" → "en iyi seçenek" yaz, neden olduğunu açıkla
+✗ "tercih edebilirsiniz / düşünebilirsiniz / göz önünde bulundurabilirsiniz" → direkt söyle
+✗ "yeterli olabilir / işe yarayabilir / daha iyi olabilir" → kesin ifade kullan
+KURAL: "olabilir" her zaman belirsizlikten kaçıştır. Jarvis kaçmaz — ya evet der ya hayır, ya al der ya geç.
+
+🔴 ZORUNLU SON KONTROL
+✓ İlk cümlem doğrudan konuya giriyor
+✓ Her soyut iddia yanında somut örnek / rakam / gerçek vaka var
+✓ Son cümle güçlü — özet, açık kapı veya eylem adımı`;
+
+     const QUALITY = `
+🔴 KALİTE STANDARDI — SOMUTLAŞTIRMA ZORUNLU
+Her soyut iddia → hemen ardından gerçek örnek, rakam veya vaka.
+"Önemlidir" → YASAK tek başına. "2024'te X vakasında şunu yarattı çünkü..." → ZORUNLU.
+Yüzeyselliğe karşı savaş: "Araştırmanızı öneririm" → hangi kaynak, neden, nasıl başlanır?`;
+
+     const LANGUAGE = `
+🔴 DİL VE TON
+Kullanıcının dil ritmini oku ve uyum sağla:
+• Teknik jargon → teknik karşılık ver
+• Rahat konuşuyor → rahatla
+• Kısa yazıyor → sen de kısa ol
+• Duygusal / zor dönem → gerçek destek, terapi dili değil
+Türkçeyi güzel kullan — zengin kelime, ama netlik için.`;
+
+     // ── Tipe özel modüller ──
+     const CODE_MODULE = `
+🔴 KOD MODU — ZORUNLU
+→ Çalışır, derlenebilir, temiz kod — sözdizimi hatası kabul edilemez
+→ Her kritik satıra Türkçe yorum
+→ Edge case ve hata yönetimini dahil et
+→ Kodu yarım bırakma — ya tam yaz ya "şu bölümü netleştirmem gerekiyor" de
+→ Alternatif yaklaşım varsa kısaca belirt`;
+
+     const EMOTIONAL_MODULE = `
+🔴 DUYGUSAL / KİŞİSEL MOD
+→ Önce anladığını göster — çözüme atlamadan önce bir cümle
+→ Performatif empati değil: "Üzgünüm" değil gerçekten yardım et
+→ Tavsiye isteniyorsa: ver, ama dayatma
+→ Tek soru sor — yük değil bir kapı
+→ Terapi dili değil insan dili`;
+
+     const CREATIVE_MODULE = `
+🔴 YARATICI YAZMA MODU
+→ Kullanıcının tonunu, sesini, amacını önce anla
+→ Klişelerden kaçın — sıradan AI gibi yazma
+→ Duygu taşıyan cümleler kur — ritim, ağırlık, nefes
+→ Meta yorum ekleme ("İşte yazdım:" gibi)`;
+
+     const COMPARISON_MODULE = `
+🔴 KARŞILAŞTIRMA MODU
+→ Tablo kullan: özellik | Seçenek A | Seçenek B
+→ Her seçeneğin güçlü/zayıf yanı gerçek örnekle
+→ Kişisel öneri: "Senin durumun için X daha uygun çünkü..."
+→ Kullanım senaryosu: "Eğer X istiyorsan A; Y öncelikliyse B"`;
+
+     const ANALYTICAL_MODULE = `
+🔴 ANALİTİK / DERİN SORU MODU
+→ Çekirdek cevap (1-2 cümle) — okuyucu cevabı en baştan bilsin
+→ Derinlemesine analiz — her paragraf öncekinin üzerine köprü kurar
+→ Farklı perspektifler — bir taraftan... öte yandan...
+→ Pratik sonuç — "Bu bilgiyle şunu yapabilirsin:"
+→ Öngörülü düşün: kullanıcının sormadığı ama bilmesi gereken şeyi de söyle`;
+
+     const SHORT_MODULE = `
+🔴 KISA/ANLIK YANIT MODU
+→ Tek cümle veya max 2-3 cümle. Giriş yok, kapanış yok.
+→ Sorunun tam cevabını ver ve dur. Gereksiz kelime sıfır.`;
+
+     // ── Bölümleri birleştir ──
+     let prompt = CORE + QUALITY + LANGUAGE;
+
+     if (isCode)       prompt += CODE_MODULE;
+     if (isEmotional)  prompt += EMOTIONAL_MODULE;
+     if (isCreative)   prompt += CREATIVE_MODULE;
+     if (isComparison) prompt += COMPARISON_MODULE;
+     if (isAnalytical) prompt += ANALYTICAL_MODULE;
+     if (isShort && !isCode && !isEmotional && !isCreative && !isAnalytical) prompt += SHORT_MODULE;
+
+     return prompt;
+   }
+   // ══════════════════════════════════════════════════════════════
 
    const self = {
       human_like_instructions: ` ║         JARVIS — ZİHİN, KİŞİLİK VE DAVRANIŞ MATRİSİ v15                      ║
@@ -10370,6 +11371,17 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
       if (!botMessageDiv || !fullText) return;
       if (botMessageDiv.querySelector('.message-actions')) return;
 
+      // ── Zayıf dil kalıplarını temizle — ekrana yansıtmadan önce ──
+      const cleanedText = cleanWeakLanguage(fullText);
+      if (cleanedText !== fullText) {
+        try {
+          const contentDiv = botMessageDiv.querySelector('.message-content');
+          if (contentDiv) contentDiv.innerHTML = parseMarkdown(cleanedText);
+          botMessageDiv.dataset.fullResponse = cleanedText;
+        } catch(e) {}
+        fullText = cleanedText;
+      }
+
       const actionsBar = document.createElement('div');
       actionsBar.className = 'message-actions';
 
@@ -10457,7 +11469,7 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
           const languageInstruction = supportedLanguages[selectedLanguage]?.systemPrompt || 'Lütfen Türkçe yanıt ver.';
           const lastUserMsgForRegen = chatHistory.filter(m => m.role === 'user').slice(-1)[0]?.content || '';
           const medicalModuleRegen = (typeof isMedicalQuery === 'function' && isMedicalQuery(lastUserMsgForRegen) && typeof getMedicalSystemPrompt === 'function') ? getMedicalSystemPrompt() : '';
-          const systemMsg = { role: 'system', content: self.human_like_instructions + medicalModuleRegen + memorySection + '\n\n' + languageInstruction };
+          const systemMsg = { role: 'system', content: getContextualPrompt(lastUserMsgForRegen, chatHistory) + medicalModuleRegen + memorySection + buildUserPrefsInstruction() + '\n\n' + languageInstruction };
           const msgs = [systemMsg, ...sanitizeChatHistory(chatHistory.slice(-30))];
           await sendStreamRequest(msgs, 8192, botMessageDiv);
         } catch(err) {
@@ -10639,7 +11651,6 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
 
     function cleanTextForTTS(text) {
       if (!text) return '';
-      // DÜZELTME: Callback kullan — $1 literal string, AI içeriğinde $ işareti varsa bozulur.
       let cleaned = text.replace(/<[^>]*>/g, '');
       cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, (_, g1) => g1);
       cleaned = cleaned.replace(/\*([^*]+)\*/g,     (_, g1) => g1);
@@ -10650,6 +11661,17 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
       cleaned = cleaned.replace(/>\s?(.*)/g,   (_, g1) => g1);
       cleaned = cleaned.replace(/[-+*]\s?(.*)/g, (_, g1) => g1);
       cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+      // ── CJK / Çince-Japonca-Korece ve diğer non-Latin scriptleri temizle ──
+      // Bu karakterler TTS motorunu karıştırır, garip sesler üretir.
+      cleaned = cleaned.replace(/[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/g, ''); // CJK Unified
+      cleaned = cleaned.replace(/[\u3040-\u309F\u30A0-\u30FF]/g, '');              // Hiragana/Katakana
+      cleaned = cleaned.replace(/[\uAC00-\uD7AF\u1100-\u11FF]/g, '');              // Korece
+      cleaned = cleaned.replace(/[\u0600-\u06FF\u0750-\u077F]/g, '');              // Arapça/Farsça
+      cleaned = cleaned.replace(/[\u0900-\u097F\u0980-\u09FF]/g, '');              // Hintçe/Bengalce
+      cleaned = cleaned.replace(/[\u0E00-\u0E7F]/g, '');                           // Taylandca
+      cleaned = cleaned.replace(/[\u0400-\u04FF]/g, '');                           // Kiril
+      // Çoklu boşlukları temizle
+      cleaned = cleaned.replace(/\s{2,}/g, ' ');
       return cleaned.trim();
     }
 
@@ -10897,6 +11919,30 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
         return enhanced;
       },
 
+      isTurkish(text) {
+        return /[çğışöüÇĞİŞÖÜ]/i.test(text) ||
+          /\b(bir|ve|ile|resim|çiz|yap|güzel|kırmızı|mavi|yeşil|sarı|beyaz|siyah|adam|kadın|çocuk|köpek|kedi|ağaç|ev|araba|deniz|dağ|orman|şehir|gece|gündüz|insan|at|kuş)\b/i.test(text);
+      },
+
+      async translateToEnglish(text) {
+        try {
+          const secureData = window._jarvisSecureData || {};
+          const apiKey = secureData.groqKey || secureData.key || '';
+          if (!apiKey) return text;
+          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+              model: 'llama-3.3-70b-versatile',
+              max_tokens: 300,
+              messages: [{ role: 'user', content: `Translate this image description to English. Return ONLY the English translation, nothing else:\n\n${text}` }]
+            })
+          });
+          const data = await res.json();
+          return data?.choices?.[0]?.message?.content?.trim() || text;
+        } catch (e) { return text; }
+      },
+
       buildAPIURL(prompt) {
         const sizeValue = this.sizeSelect?.value || "512x512";
         const [width, height] = sizeValue.split('x');
@@ -10918,16 +11964,21 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
       async generateImage() {
         const prompt = this.promptInput?.value.trim();
         if (!prompt) {
-          alert('Lütfen bir resim açıklaması girin.');
+          jarvisToast('🖼️ Lütfen bir resim açıklaması girin.', 'warn');
           return;
         }
 
-        const enhancedPrompt = this.enhancePrompt(prompt);
-        
         this.inputSection?.classList.add('hidden');
         this.loadingSection?.classList.remove('hidden');
         this.errorSection?.classList.add('hidden');
         this.resultSection?.classList.add('hidden');
+
+        // Türkçe prompt varsa İngilizce'ye çevir
+        let translatedPrompt = prompt;
+        if (this.isTurkish(prompt)) {
+          translatedPrompt = await this.translateToEnglish(prompt);
+        }
+        const enhancedPrompt = this.enhancePrompt(translatedPrompt);
 
         const finalUrl = this.buildAPIURL(enhancedPrompt);
         const finalUrlWithCacheBust = finalUrl + "&t=" + Date.now();
@@ -11069,8 +12120,14 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
       const voiceText = document.getElementById('voice-text');
       if (voiceText) voiceText.textContent = getUI(selectedLanguage).voiceLive;
 
+      // Ses listesini önceden yükle — ilk TTS çağrısında gecikme olmasın
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+
       setLiveState('idle');
-      setTimeout(() => startVoiceRecognition(), 400);
+      setTimeout(() => startVoiceRecognition(), 500);
     }
 
     function closeVoiceLiveScreen() {
@@ -11113,7 +12170,16 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       liveModeRecognition = new SpeechRecognition();
-      liveModeRecognition.lang = 'tr-TR';
+      // Seçilen dile göre recognition dili — sabit 'tr-TR' değil
+      const _langMap = {
+        'tr':'tr-TR','en':'en-US','fr':'fr-FR','de':'de-DE','es':'es-ES',
+        'it':'it-IT','pt':'pt-PT','nl':'nl-NL','pl':'pl-PL','sv':'sv-SE',
+        'el':'el-GR','ar':'ar-SA','ja':'ja-JP','ko':'ko-KR','zh':'zh-CN',
+        'ru':'ru-RU','hi':'hi-IN','bg':'bg-BG','hr':'hr-HR','cs':'cs-CZ',
+        'da':'da-DK','fi':'fi-FI','hu':'hu-HU','ro':'ro-RO','uk':'uk-UA'
+      };
+      const _recogLang = _langMap[typeof selectedLanguage !== 'undefined' ? selectedLanguage : 'tr'] || 'tr-TR';
+      liveModeRecognition.lang = _recogLang;
       liveModeRecognition.continuous = false; // Her cümle ayrı — daha stabil
       liveModeRecognition.interimResults = true;
       liveModeRecognition.maxAlternatives = 1;
@@ -11256,27 +12322,38 @@ Jarvis olmak bu standartta yazmak demektir — daha azı bu kimliğe ihanettir.
           : '';
         const languageInstruction = supportedLanguages[selectedLanguage]?.systemPrompt || 'Lütfen Türkçe yanıt ver.';
 
+        // Dil etiketi — TTS ve yanıt dilini netleştir
+        const _langLabels = {
+          'tr':'Türkçe','en':'İngilizce','fr':'Fransızca','de':'Almanca',
+          'es':'İspanyolca','it':'İtalyanca','pt':'Portekizce','nl':'Hollandaca',
+          'pl':'Lehçe','sv':'İsveççe','el':'Yunanca','ar':'Arapça',
+          'ja':'Japonca','ko':'Korece','zh':'Çince','ru':'Rusça',
+          'hi':'Hintçe','bg':'Bulgarca','hr':'Hırvatça','cs':'Çekçe',
+          'da':'Danca','fi':'Fince','hu':'Macarca','ro':'Rumence','uk':'Ukraynaca'
+        };
+        const _activeLangLabel = _langLabels[typeof selectedLanguage !== 'undefined' ? selectedLanguage : 'tr'] || 'Türkçe';
+
         const systemMessage = {
           role: 'system',
-          content: self.human_like_instructions + `
+          content: getContextualPrompt('sesli konuşma sohbet', chatHistory) + `
 
 ╔══════════════════════════════════════════════════════════════════════════╗
-║                  🎙️ LIVE MOD — SESLİ SOHBET PROTOKOLÜ v3                ║
+║                  🎙️ LIVE MOD — SESLİ SOHBET PROTOKOLÜ v4                ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 
-Şu an kullanıcıyla CANLI sesli konuşma yapıyorsun. Bu mod yazılı sohbetten
-tamamen farklı bir iletişim biçimidir. Aşağıdaki kurallar kesinlikle uygulanır.
+Şu an kullanıcıyla CANLI sesli konuşma yapıyorsun. Aktif yanıt dili: ${_activeLangLabel}.
+Bu mod yazılı sohbetten tamamen farklı bir iletişim biçimidir.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 §1 · SES FORMATI — YAZILI DEĞİL, KONUŞULUYOR
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ZORUNLU KURALLAR:
-Markdown kesinlikle yasak: yıldız, diyez, tire, backtick, tablo hiçbiri yok.
-Madde listesi yasak. Sayıları kelimeyle yaz: üç, iki bin yirmi dört.
-Kısaltma kullanma: vesaire, ve benzeri şeklinde yaz.
-Cümleler kısa ve nefes alınabilir olsun, en fazla on beş kelime.
+Markdown kesinlikle yasak: yıldız, diyez, tire, backtick, tablo, URL hiçbiri yok.
+Madde listesi yasak. Sayıları kelimeyle yaz.
+Kısaltma kullanma. Cümleler kısa ve nefes alınabilir olsun.
 Doğal bağlayıcılar kullanabilirsin: yani, aslında, şöyle düşün.
+Emoji, sembol, özel karakter kesinlikle yasak — TTS motoru bozulur.
 
 YANIT UZUNLUĞU:
 Basit soru: bir iki cümle, yirmi beş kelimeyi geçme.
@@ -11314,6 +12391,7 @@ Liste gerekirse: önce, sonra, en son şeklinde yaz, en fazla üç madde.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Markdown semboller, madde listeleri, tablo, kod bloğu, URL yasak.
+Emoji ve semboller kesinlikle yasak — sesli okumada bozulur.
 Altı cümleden uzun yanıt yasak.
 Yapay zeka olarak meta yorumlar yasak.
 Umarım yardımcı olmuşumdur kapanışı yasak.
@@ -11385,7 +12463,7 @@ ${languageInstruction}`
 
         if (!fullResponse.trim()) throw new Error('Boş yanıt');
 
-        chatHistory.push({ role: 'assistant', content: fullResponse });
+        pushToHistory('assistant', fullResponse);
         lastBotResponse = fullResponse;
         setLiveState('speaking');
         updateLiveTranscript('🤖 ' + fullResponse, 'ai-responding');
@@ -11506,22 +12584,45 @@ ${languageInstruction}`
       window.speechSynthesis.cancel();
 
       const clean = cleanTextForTTS(text);
+      if (!clean.trim()) {
+        // Temizlendikten sonra boş kaldıysa (örn. tamamı yabancı karakter) — dinlemeye dön
+        if (isLiveModeActive) { setLiveState('idle'); setTimeout(() => startVoiceRecognition(), 500); }
+        return;
+      }
+
       const utter = new SpeechSynthesisUtterance(clean);
-      utter.lang = 'tr-TR'; utter.rate = 0.95; utter.pitch = 1.0; utter.volume = 1.0;
-      const trVoice = window.speechSynthesis.getVoices().find(v => v.lang.startsWith('tr'));
-      if (trVoice) utter.voice = trVoice;
+
+      // Dil haritası
+      const _ttsLangMap = {
+        'tr':'tr-TR','en':'en-US','fr':'fr-FR','de':'de-DE','es':'es-ES',
+        'it':'it-IT','pt':'pt-PT','nl':'nl-NL','pl':'pl-PL','sv':'sv-SE',
+        'el':'el-GR','ar':'ar-SA','ja':'ja-JP','ko':'ko-KR','zh':'zh-CN',
+        'ru':'ru-RU','hi':'hi-IN','bg':'bg-BG','hr':'hr-HR','cs':'cs-CZ',
+        'da':'da-DK','fi':'fi-FI','hu':'hu-HU','ro':'ro-RO','uk':'uk-UA'
+      };
+      const _ttsLang = _ttsLangMap[typeof selectedLanguage !== 'undefined' ? selectedLanguage : 'tr'] || 'tr-TR';
+      utter.lang = _ttsLang;
+
+      // Doğal konuşma parametreleri — dile göre ayarlanmış
+      utter.rate  = (_ttsLang.startsWith('tr') || _ttsLang.startsWith('de') || _ttsLang.startsWith('pl')) ? 0.92 : 0.95;
+      utter.pitch = 1.05;
+      utter.volume = 1.0;
+
+      // En iyi ses seç: önce exact match, sonra prefix match, son çare default
+      const voices = window.speechSynthesis.getVoices();
+      const exactVoice = voices.find(v => v.lang === _ttsLang);
+      const prefixVoice = voices.find(v => v.lang.startsWith(_ttsLang.split('-')[0]));
+      if (exactVoice) utter.voice = exactVoice;
+      else if (prefixVoice) utter.voice = prefixVoice;
 
       isTTSPlaying = true;
       setLiveState('speaking');
-      // Altyazı — yanıt metni
       updateLiveTranscript('🤖 ' + text, 'ai-responding');
 
       utter.onstart = () => {
         isTTSPlaying = true;
-        // Ses dalgaları görünür ve aktif hale getir
         const wave = document.getElementById('live-wave');
         if (wave) wave.style.display = 'flex';
-        // Tahmini okuma süresi: ortalama 130ms/karakter (0.95 hız)
         const estMs = clean.length * 130;
         _startTextWave(clean, estMs);
       };
@@ -11547,7 +12648,9 @@ ${languageInstruction}`
       };
 
       window.speechSynthesis.speak(utter);
-      setTimeout(() => { if (window.speechSynthesis.paused) window.speechSynthesis.resume(); }, 100);
+      // iOS/Safari bazen TTS'i pauzluyor — 200ms içinde kontrol et
+      setTimeout(() => { if (window.speechSynthesis.paused) window.speechSynthesis.resume(); }, 200);
+      setTimeout(() => { if (window.speechSynthesis.paused) window.speechSynthesis.resume(); }, 800);
     }
 
         function convertMarkdownInline(text) {
@@ -11666,6 +12769,67 @@ ${languageInstruction}`
       }
 
       return result;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  "OLABİLİR" POST-PROCESSOR — %100 garantili temizlik
+    //  AI yanıtı geldikten sonra zayıf dil kalıplarını güçlendirir.
+    //  Prompt baskısı yetersiz kaldığında son savunma hattı.
+    // ══════════════════════════════════════════════════════════════
+    function cleanWeakLanguage(text) {
+      if (!text) return text;
+      let t = text;
+
+      // ── Öneri kalıpları — kesin ifadeye dönüştür ──
+      t = t.replace(/\ben iyi seçenek olabilir\b/gi, 'en iyi seçenek');
+      t = t.replace(/\biyi bir seçenek olabilir\b/gi, 'iyi bir seçenek');
+      t = t.replace(/\bideal bir seçenek olabilir\b/gi, 'ideal bir seçenek');
+      t = t.replace(/\buygun bir seçenek olabilir\b/gi, 'uygun bir seçenek');
+      t = t.replace(/\bdoğru seçim olabilir\b/gi, 'doğru seçim');
+      t = t.replace(/\biyi bir tercih olabilir\b/gi, 'iyi bir tercih');
+
+      // ── "tercih edebilirsiniz / düşünebilirsiniz" kalıpları ──
+      t = t.replace(/\btercih edebilirsiniz\b/gi, 'tercih et');
+      t = t.replace(/\bdüşünebilirsiniz\b/gi, 'düşün');
+      t = t.replace(/\bgöz önünde bulundurabilirsiniz\b/gi, 'göz önünde bulundur');
+      t = t.replace(/\bdeğerlendirebilirsiniz\b/gi, 'değerlendir');
+      t = t.replace(/\btercih edebilir\b/gi, 'tercih eder');
+
+      // ── Performans / yeterlilik kalıpları ──
+      t = t.replace(/\byeterli olabilir\b/gi, 'yeterli');
+      t = t.replace(/\byeterli olmayabilir\b/gi, 'yetmez');
+      t = t.replace(/\bişe yarayabilir\b/gi, 'işe yarıyor');
+      t = t.replace(/\bsorun yaşayabilirsiniz\b/gi, 'sorun yaşarsın');
+      t = t.replace(/\bsorun çıkabilir\b/gi, 'sorun çıkar');
+      t = t.replace(/\bdaha iyi olabilir\b/gi, 'daha iyi');
+      t = t.replace(/\bdaha hızlı olabilir\b/gi, 'daha hızlı');
+      t = t.replace(/\bdaha verimli olabilir\b/gi, 'daha verimli');
+
+      // ── "sunabilir" pasif kaçışları ──
+      t = t.replace(/\bsunabilir\b/gi, 'sunuyor');
+      t = t.replace(/\bsağlayabilir\b/gi, 'sağlıyor');
+      t = t.replace(/\bverebilir\b/gi, 'veriyor');
+      t = t.replace(/\bsunmaktadır\b/gi, 'sunuyor');
+      t = t.replace(/\bsağlamaktadır\b/gi, 'sağlıyor');
+
+      // ── "uygun görünüyor / görünebilir" ──
+      t = t.replace(/\buygun görünüyor\b/gi, 'uygun');
+      t = t.replace(/\bseviyesinde görünüyor\b/gi, 'seviyesinde');
+      t = t.replace(/\biyi görünüyor\b/gi, 'iyi');
+
+      // ── "dikkate alınabilir / göz önüne alınabilir" ──
+      t = t.replace(/\bdikkate alınabilir\b/gi, 'dikkate al');
+      t = t.replace(/\bgöz önüne alınabilir\b/gi, 'göz önüne al');
+      t = t.replace(/\bdeğerlendirilebilir\b/gi, 'değerlendir');
+
+      // ── Sonuç cümlesi klişeleri ──
+      t = t.replace(/\bSonuç olarak,?\s*/gi, '');
+      t = t.replace(/\bÖzetle,?\s*/gi, '');
+      t = t.replace(/\bGenel itibarıyla,?\s*/gi, '');
+      t = t.replace(/\bGenel olarak bakıldığında,?\s*/gi, '');
+      t = t.replace(/\bBu bağlamda,?\s*/gi, '');
+
+      return t;
     }
 
     function parseMarkdown(text) {
@@ -11918,7 +13082,7 @@ ${languageInstruction}`
                 }
                 wrapperDiv.dataset.fullResponse = finalAnswer;
                 lastBotResponse = finalAnswer;
-                chatHistory.push({ role: 'assistant', content: finalAnswer });
+                pushToHistory('assistant', finalAnswer);
                 addCopyButtonToMessage(wrapperDiv, finalAnswer);
                 if (isTTSEnabled) speak(finalAnswer);
                 renderAllLaTeX();
@@ -12005,7 +13169,7 @@ ${languageInstruction}`
         if (fb) {
           try { contentDiv.innerHTML = parseMarkdown(fb); } catch(e) { contentDiv.textContent = fb; }
           lastBotResponse = fb;
-          chatHistory.push({ role: 'assistant', content: fb });
+          pushToHistory('assistant', fb);
           await saveCurrentChat();
         } else {
           contentDiv.innerHTML = '<p style="font-size:.85rem;color:#f59e0b">⚠️ Yanıt üretilemedi. Lütfen soruyu farklı bir şekilde sorun.</p>';
@@ -12024,14 +13188,19 @@ ${languageInstruction}`
     }
 
     // chatHistory'deki array content'li mesajları (eski görsel kayıtları) metin formatına çevir
-    function sanitizeChatHistory(history) {
+    function sanitizeChatHistory(history, maxBotChars = 3000) {
       return history.map(msg => {
-        if (Array.isArray(msg.content)) {
-          // image_url ve text array'ini düz metne indir — API hatasını önler
-          const textPart = msg.content.find(c => c.type === 'text');
-          return { ...msg, content: textPart ? textPart.text : '🖼️ [Görsel]' };
+        let content = msg.content;
+        // image_url ve text array'ini düz metne indir — API hatasını önler
+        if (Array.isArray(content)) {
+          const textPart = content.find(c => c.type === 'text');
+          content = textPart ? textPart.text : '🖼️ [Görsel]';
         }
-        return msg;
+        // Bot mesajları çok uzunsa kes — 413 önlemi
+        if (msg.role === 'assistant' && typeof content === 'string' && content.length > maxBotChars) {
+          content = content.slice(0, maxBotChars) + '\n... [önceki yanıt kısaltıldı]';
+        }
+        return { ...msg, content };
       });
     }
 
@@ -12108,7 +13277,12 @@ ${languageInstruction}`
             method: 'POST',
             headers: { 'Authorization': `Bearer ${secure.apiKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              messages: messages,
+              messages: messages.map((m, i) =>
+                // İlk mesaj (system prompt) — cache_control ekle, tekrar gönderimde token tasarrufu
+                (i === 0 && m.role === 'system')
+                  ? { ...m, cache_control: { type: 'ephemeral' } }
+                  : m
+              ),
               model: 'moonshotai/kimi-k2-instruct-0905',
               temperature: 0.2,
               max_tokens: maxTokens,
@@ -12155,7 +13329,7 @@ ${languageInstruction}`
 
               wrapperDiv.dataset.fullResponse = answerAcc;
               lastBotResponse = answerAcc;
-              chatHistory.push({ role: 'assistant', content: answerAcc });
+              pushToHistory('assistant', answerAcc);
               addCopyButtonToMessage(wrapperDiv, answerAcc);
               codeLabel.textContent = '✅ Kod hazır';
               thinkingPanel.classList.add('complete');
@@ -12187,7 +13361,7 @@ ${languageInstruction}`
         if (answerAcc.trim()) {
           try { contentDiv.innerHTML = parseMarkdown(answerAcc); } catch(e) { contentDiv.textContent = answerAcc; }
           lastBotResponse = answerAcc;
-          chatHistory.push({ role: 'assistant', content: answerAcc });
+          pushToHistory('assistant', answerAcc);
           await saveCurrentChat();
         } else {
           contentDiv.innerHTML = '<p style="font-size:.85rem;color:#f59e0b">⚠️ Kod üretilemedi. Lütfen isteği daha açık bir şekilde yazın.</p>';
@@ -12407,7 +13581,7 @@ YANIT KURALLARI:
 
                 targetDiv.dataset.fullResponse = fullResponse;
                 lastBotResponse = fullResponse;
-                chatHistory.push({ role: 'assistant', content: fullResponse });
+                pushToHistory('assistant', fullResponse);
                 
                 addCopyButtonToMessage(targetDiv, fullResponse);
                 
@@ -12448,7 +13622,7 @@ YANIT KURALLARI:
           }
           targetDiv.dataset.fullResponse = fullResponse;
           lastBotResponse = fullResponse;
-          chatHistory.push({ role: 'assistant', content: fullResponse });
+          pushToHistory('assistant', fullResponse);
           addCopyButtonToMessage(targetDiv, fullResponse);
           await saveCurrentChat();
         } else {
@@ -12581,7 +13755,7 @@ YANIT KURALLARI:
 
         const languageInstruction = supportedLanguages[selectedLanguage]?.systemPrompt || 'Lütfen Türkçe yanıt ver.';
 
-        let systemContent = self.human_like_instructions + `\n\n── GÖRSEL ANALİZ MODU ──
+        let systemContent = getContextualPrompt('görsel analiz fotoğraf', chatHistory) + `\n\n── GÖRSEL ANALİZ MODU ──
 Kullanıcı ${imageFiles.length > 1 ? imageFiles.length + ' görsel yükledi' : 'bir görsel yükledi'} ve soru sordu: "${question}"
 
 GÖRSEL ANALİZ PROTOKOLÜ:
@@ -12591,10 +13765,10 @@ GÖRSEL ANALİZ PROTOKOLÜ:
 4. Gerekiyorsa görselde gördüğün spesifik detayları referans al.
 5. Belirsiz veya okunamayan kısımlar için dürüstçe belirt.
 
-Net, detaylı ve doğrudan yanıt ver. ${languageInstruction}`;
+Net, detaylı ve doğrudan yanıt ver. ${languageInstruction}${buildUserPrefsInstruction()}`;
         
         if (educationMode) {
-          systemContent = self.human_like_instructions + `
+          systemContent = getContextualPrompt('eğitim öğret açıkla', chatHistory) + `
 
 ════════════════════════════════════════════════════════
 🎓 EĞİTİM MODU — GÖRSEL ANALİZ USTA ÖĞRETMEN PROTOKOLÜ
@@ -13195,7 +14369,7 @@ Net, detaylı ve doğrudan yanıt ver. ${languageInstruction}`;
         const memorySection = memory ? `\n\n── KULLANICI HAFIZASI ──\n${memory}\n\nBilgileri sessizce entegre et.` : '';
         const languageInstruction = supportedLanguages[selectedLanguage]?.systemPrompt || 'Lütfen Türkçe yanıt ver.';
         
-        const systemContent = self.human_like_instructions + `\n\n── DOSYA ANALİZ MODU ──
+        const systemContent = getContextualPrompt('dosya analiz içerik', chatHistory) + `\n\n── DOSYA ANALİZ MODU ──
 Kullanıcı bir dosya yükledi. Soru: "${question}"
 
 DOSYA ANALİZ PROTOKOLÜ:
@@ -13206,7 +14380,7 @@ DOSYA ANALİZ PROTOKOLÜ:
 5. Veri dosyasıysa: örüntüler, anomaliler, önemli istatistikler.
 6. Belirsiz veya eksik içerik varsa dürüstçe belirt.
 
-Yanıtın pratik, eyleme geçirilebilir ve soruya odaklı olsun.${memorySection} ${languageInstruction}`;
+Yanıtın pratik, eyleme geçirilebilir ve soruya odaklı olsun.${memorySection}${buildUserPrefsInstruction()} ${languageInstruction}`;
 
         const systemMessage = { role: 'system', content: systemContent };
         const tokenLimit = 8192; // Groq modelleri max 8192
@@ -13388,6 +14562,21 @@ Yanıtın pratik, eyleme geçirilebilir ve soruya odaklı olsun.${memorySection}
       }
     }
 
+    // Hafızadan kullanıcının ilgi alanlarını çıkar — arama kişiselleştirmesi için
+    function getInterestsFromMemory() {
+      try {
+        const memory = getMemory();
+        if (!memory) return [];
+        const interests = [];
+        const lines = memory.split('\n');
+        for (const line of lines) {
+          const match = line.match(/[İi]lgi\s*alan[iı]:\s*(.+)/i);
+          if (match) interests.push(match[1].trim());
+        }
+        return interests;
+      } catch(e) { return []; }
+    }
+
     function saveMemory(memory) {
       try {
         localStorage.setItem('jarvisMemory', memory);
@@ -13408,12 +14597,158 @@ Yanıtın pratik, eyleme geçirilebilir ve soruya odaklı olsun.${memorySection}
       }
     }
 
+    // ══════════════════════════════════════════════════════════════
+    //  OTOMATİK BELLEK SİSTEMİ
+    //  — Her AI yanıtından sonra kullanıcı hakkında bilgi çıkarır
+    //  — Belleğe cümle halinde ekler (tekrar varsa günceller)
+    //  — Toggle ile açılıp kapatılabilir (varsayılan: açık)
+    // ══════════════════════════════════════════════════════════════
+
+    function isAutoMemoryEnabled() {
+      try {
+        const val = localStorage.getItem('jarvisAutoMemory');
+        return val === null ? true : val === 'true'; // varsayılan açık
+      } catch(e) { return true; }
+    }
+
+    function setAutoMemoryEnabled(val) {
+      try { localStorage.setItem('jarvisAutoMemory', val ? 'true' : 'false'); } catch(e) {}
+    }
+
+    function toggleAutoMemory() {
+      const enabled = !isAutoMemoryEnabled();
+      setAutoMemoryEnabled(enabled);
+      updateAutoMemoryToggleUI(enabled);
+    }
+
+    function updateAutoMemoryToggleUI(enabled) {
+      const btn = document.getElementById('auto-memory-toggle');
+      const knob = document.getElementById('auto-memory-knob');
+      if (!btn || !knob) return;
+      if (enabled) {
+        btn.style.background = '#34d399';
+        knob.style.transform = 'translateX(26px)';
+      } else {
+        btn.style.background = '#d1d5db';
+        knob.style.transform = 'translateX(2px)';
+      }
+    }
+
+    // Sohbetten kullanıcı hakkında bilgi çıkar ve belleğe ekle
+    async function autoExtractAndSaveMemory(userMessage, botResponse) {
+      if (!isAutoMemoryEnabled()) return;
+      try {
+        const secure = getSecureData();
+        if (!secure || !secure.apiKey) return;
+
+        const currentMemory = getMemory();
+
+        const prompt = `Sen bir kişisel bilgi çıkarıcısın. Aşağıdaki konuşmadan SADECE kullanıcı hakkında NET ve SOMUT kişisel bilgiler çıkar.
+
+Çıkarılabilecek bilgi türleri: isim, yaş, meslek, şehir/ülke, hobiler, ilgi alanları, aile durumu, evcil hayvan, dil tercihleri, öğrenim durumu, teknoloji tercihleri, favori şeyler (yemek/müzik/film vb.), sağlık durumu, günlük alışkanlıklar, hedefler veya projeler.
+AYRICA: Kullanıcının sık sorduğu konuları (spor, teknoloji, haber, kripto vb.) "İlgi alanı: X" formatında kaydet.
+
+KURAL: 
+- Yalnızca kullanıcının AÇIKÇA söylediği veya kendi ağzından belirttiği bilgileri al.
+- Varsayım yapma, çıkarım yapma.
+- Bilgi yoksa SADECE şunu yaz: BOŞ
+- Varsa kısa cümleler halinde yaz. Örnek: "Kullanıcının adı Ali. Yazılım geliştirici. İstanbul'da yaşıyor. Kahve seviyor. İlgi alanı: yapay zeka haberleri."
+- Zaten bilinen bilgileri tekrar yazma. Sadece YENİ bilgileri çıkar.
+
+Mevcut bilinen bilgiler:
+${currentMemory || '(henüz yok)'}
+
+Kullanıcı mesajı: "${userMessage}"
+
+Çıkarılacak YENİ bilgiler (sadece, başka hiçbir şey yazma):`;
+
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${secure.apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            max_tokens: 200,
+            temperature: 0.1,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+
+        if (!res.ok) return;
+        const data = await res.json();
+        const extracted = data.choices?.[0]?.message?.content?.trim() || '';
+
+        if (!extracted || extracted === 'BOŞ' || extracted.toLowerCase().includes('boş')) return;
+
+        // Mevcut belleğe ekle (boşlukla ayır)
+        const updated = currentMemory
+          ? currentMemory.trimEnd() + '\n' + extracted
+          : extracted;
+
+        saveMemory(updated);
+
+        // Bildirim: küçük toast göster
+        showAutoMemoryToast(extracted);
+
+      } catch(e) {
+        console.error('Otomatik bellek hatası:', e);
+      }
+    }
+
+    function showAutoMemoryToast(text) {
+      // Zaten varsa kaldır
+      const existing = document.getElementById('auto-memory-toast');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'auto-memory-toast';
+      toast.style.cssText = `
+        position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+        background:rgba(16,185,129,0.95); color:white; padding:10px 18px;
+        border-radius:20px; font-size:0.78rem; z-index:9999; max-width:320px;
+        text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.2);
+        animation: toastIn 0.4s cubic-bezier(0.22,1,0.36,1);
+        backdrop-filter:blur(8px);
+      `;
+
+      // Stil ekle
+      if (!document.getElementById('auto-memory-toast-style')) {
+        const s = document.createElement('style');
+        s.id = 'auto-memory-toast-style';
+        s.textContent = `
+          @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(12px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+          @keyframes toastOut { from { opacity:1; transform:translateX(-50%) translateY(0); } to { opacity:0; transform:translateX(-50%) translateY(8px); } }
+        `;
+        document.head.appendChild(s);
+      }
+
+      const shortText = text.length > 80 ? text.substring(0, 80) + '…' : text;
+      toast.innerHTML = `🧠 <strong>Belleğe eklendi:</strong> ${shortText}`;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'toastOut 0.4s ease forwards';
+        setTimeout(() => toast.remove(), 400);
+      }, 3500);
+    }
+
     function showMemoryModal() {
       const memoryModal = document.getElementById('memory-modal');
       const memoryTextarea = document.getElementById('memory-textarea');
       
       memoryTextarea.value = getMemory();
       memoryModal.classList.remove('hidden');
+
+      // Toggle UI'ı güncel durumla ayarla
+      updateAutoMemoryToggleUI(isAutoMemoryEnabled());
+
+      // Otomatik eklendi badge — bellek boş değilse göster
+      const badge = document.getElementById('memory-auto-badge');
+      if (badge) {
+        badge.style.display = getMemory() ? 'inline' : 'none';
+      }
       
       document.getElementById('settings-menu').classList.add('hidden');
       document.getElementById('mobile-settings-menu').classList.add('hidden');
@@ -13442,7 +14777,7 @@ Yanıtın pratik, eyleme geçirilebilir ve soruya odaklı olsun.${memorySection}
       }
     }
 
-    // Groq API ile otomatik sohbet başlığı üretir (llama-3.1-8b-instant — hızlı & hafif)
+    // Groq API ile otomatik sohbet başlığı üretir (llama-3.3-70b-versatile — hızlı & hafif)
     async function generateChatTitle(history) {
       try {
         const secure = getSecureData();
@@ -13464,7 +14799,7 @@ Yanıtın pratik, eyleme geçirilebilir ve soruya odaklı olsun.${memorySection}
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'llama-3.1-8b-instant',
+            model: 'llama-3.3-70b-versatile',
             max_tokens: 12,
             temperature: 0.4,
             messages: [
@@ -13544,6 +14879,46 @@ Yanıtın pratik, eyleme geçirilebilir ve soruya odaklı olsun.${memorySection}
       chatInput.style.height = newHeight + 'px';
     }
 
+    // ══════════════════════════════════════════════════════════════
+    //  CEVAP GEÇMİŞTE VAR MI? — Yeniden arama önleme motoru
+    //  Eğer son AI yanıtı soruya cevap veriyorsa → arama yapma,
+    //  Jarvis kendi hafızasından cevap versin.
+    // ══════════════════════════════════════════════════════════════
+    function isAnswerLikelyInHistory(userMessage) {
+      if (!chatHistory || chatHistory.length < 3) return false;
+      const lower = userMessage.toLowerCase().trim();
+      const wordCount = lower.split(/\s+/).length;
+
+      // Sadece kısa takip sorularına uygula (6 kelimeden kısa)
+      if (wordCount > 6) return false;
+
+      // Açıkça yeni konu isteği varsa geçme
+      if (/\b(araştır|bulsana|yeni\s*konu|başka\s*bir|farklı\s*bir)\b/.test(lower)) return false;
+
+      // Son 3 assistant mesajını kontrol et
+      const recentAssistantMsgs = chatHistory
+        .filter(m => m.role === 'assistant')
+        .slice(-3)
+        .map(m => String(m.content).toLowerCase());
+
+      if (recentAssistantMsgs.length === 0) return false;
+
+      // Sorudan anahtar kelimeleri çıkar
+      const stopWords = new Set(['bir','ile','için','var','yok','gibi','daha','çok','bu','şu',
+        'ne','kim','kaç','neden','nasıl','peki','ya','da','de','mi','mı','mu','mü']);
+      const queryKeys = lower.split(/\s+/)
+        .filter(w => w.length > 2 && !stopWords.has(w));
+
+      if (queryKeys.length === 0) return false;
+
+      // Eğer son yanıtlarda bu kelimelerin %60'ı varsa → cevap zaten orada
+      const recentText = recentAssistantMsgs.join(' ');
+      const matchCount = queryKeys.filter(w => recentText.includes(w)).length;
+      const matchRatio = matchCount / queryKeys.length;
+
+      return matchRatio >= 0.6 && recentText.length > 200;
+    }
+
     let _isSendingTimestamp = 0;
 // Debounce throttle: prevent rapid repeated sends without altering UI
 let __lastSendTimestamp = 0;
@@ -13610,7 +14985,7 @@ let __lastSendTimestamp = 0;
           botDiv.className = 'message-bubble bot-message';
           botDiv.innerHTML = `<div class="message-content">${parseMarkdown(mektebimYanit)}</div><div class="message-time">${getCurrentTime()}</div>`;
           chatMessages.appendChild(botDiv);
-          chatHistory.push({ role: 'assistant', content: mektebimYanit });
+          pushToHistory('assistant', mektebimYanit);
           addMessageActions(botDiv, mektebimYanit);
           chatMessages.scrollTop = chatMessages.scrollHeight;
           return;
@@ -13668,12 +15043,50 @@ let __lastSendTimestamp = 0;
       }
       scrollToBottom();
 
+      // ── KULLANICI TERCİH TESPİTİ: Her mesajda çalışır ──────────────
+      // "kısa cevap ver", "madde madde yaz" gibi yönlendirmeleri hafızaya alır
+      detectAndSaveUserPrefs(message);
+
+      // ── ARAMA BAĞLAM PENCERESİ: Kullanıcı mesajını ekle ────────────
+      addToSearchContext('user', message);
+
       // ── ADIM 3: Yeni arama gerektiriyor mu? ──
       // Kod yazma modunda arama ve LLM intent check atlanır — tek çağrı yeterli.
       let _ruleSearch = codeWritingMode ? false : shouldAutoSearch(message);
-      let _searchQuery = message;
+      
+      // ── Türkçe komut kelimelerini sorguden temizle ──
+      const _cleanMessage = message
+        .replace(/\baraştır\b/gi, '')
+        .replace(/\baraştırır\s*mısın\b/gi, '')
+        .replace(/\bbulsana\b/gi, '')
+        .replace(/\bsöyle\b/gi, '')
+        .replace(/\bbul\b/gi, '')
+        .replace(/\bgöster\b/gi, '')
+        .replace(/\blütfen\b/gi, '')
+        .replace(/\s+/g, ' ').trim() || message;
+      
+      let _searchQuery = _cleanMessage;
+
+      // ── Cevap zaten chatHistory'deyse yeniden arama yapma ──
+      if (_ruleSearch && isAnswerLikelyInHistory(message)) {
+        console.log('[JARVIS] Cevap geçmişte bulundu → arama atlandı:', message);
+        _ruleSearch = false;
+      }
 
       if (!codeWritingMode) {
+        // Karşılaştırma sorgularında LLM optimizasyonunu atla — iki taraf da
+        // performInternetSearch içinde ayrı ayrı aranacak, optimizasyon sorguyu bozar.
+        // NOT: Sadece gerçek ürün/marka adlarıyla birlikte karşılaştırma → arama tetikle.
+        // "kıyasla" / "karşılaştır" tek başına veya kavramsal karşılaştırmalarda bypass YAPMA.
+        const _hasCompWord =
+          /\b(kıyasla|karşılaştır|kıyaslasana|karşılaştırsana|kıyaslar\s*mısın|karşılaştırır\s*mısın)\b/i.test(message) ||
+          /\b(vs\.?|versus)\b/i.test(message) ||
+          /\b(farkı\s*ne|arasındaki\s*fark|hangisi\s*daha)\b/i.test(message);
+        const _hasSearchableProduct =
+          /\b(iphone|samsung|galaxy|pixel|xiaomi|oneplus|huawei|oppo|realme|motorola|redmi|poco|xperia|nothing|honor|macbook|thinkpad|dell|hp|lenovo|acer|asus|surface|chromebook|rtx|rx\s*\d|gtx|radeon|geforce|playstation|ps[45]|xbox|nintendo|tesla|togg|netflix|spotify)\b/i.test(message) ||
+          /\b\d{3,4}\s*(ti|xt|super|ultra|plus|pro|max|fe)?\b/.test(message);
+        const _isComparisonMsg = _hasCompWord && _hasSearchableProduct;
+
         if (!_ruleSearch) {
           const llmDecision = await llmIntentCheck(message);
           console.log('[JARVIS] LLM intent karar:', JSON.stringify(llmDecision), '| mesaj:', message);
@@ -13681,8 +15094,25 @@ let __lastSendTimestamp = 0;
             _ruleSearch = true;
             _searchQuery = llmDecision.query || message;
           }
+        } else if (_isComparisonMsg) {
+          // Karşılaştırma: orijinal mesajı aynen performInternetSearch'e ver
+          // (extractComparisonTerms içinde iki ürün tespit edilip ayrı ayrı aranacak)
+          console.log('[JARVIS] Karşılaştırma sorgusu → LLM optimizasyonu atlandı, orijinal sorgu korunuyor:', message);
+          _searchQuery = message;
         } else {
-          const optimized = await llmOptimizeQuery(message);
+          // ── Kısa/bağımlı mesajlar için konuşma bağlamını query'ye ekle ──
+          // Sliding window'dan konu çıkar (son 8 mesaj)
+          const isShortOrAmbiguous = message.trim().split(/\s+/).length <= 6;
+          if (isShortOrAmbiguous && searchContextWindow.length >= 2) {
+            const recentTopics = searchContextWindow
+              .filter(m => m.role === 'user')
+              .map(m => m.content.slice(0, 120))
+              .join(' | ');
+            if (recentTopics.length > 10) {
+              _searchQuery = message + ' (bağlam: ' + recentTopics.slice(0, 200) + ')';
+            }
+          }
+          const optimized = await llmOptimizeQuery(_searchQuery);
           console.log('[JARVIS] LLM sorgu optimizasyonu:', '"' + message + '"', '→', '"' + optimized + '"');
           _searchQuery = optimized;
         }
@@ -13733,33 +15163,44 @@ let __lastSendTimestamp = 0;
         
         const languageInstruction = supportedLanguages[selectedLanguage]?.systemPrompt || 'Lütfen Türkçe yanıt ver.';
         
-        let systemInstruction = self.human_like_instructions;
+        let systemInstruction = '';
 
         if (codeWritingMode) {
-          systemInstruction = `Sen Jarvis'sin, uzman bir yazılımcısın. Her dilde (Python, JS, C, C++, Java, Rust, Go, VHDL, Verilog, SQL, HTML, CSS, Assembly vb.) hatasız, çalışan kod üretiyorsun.
+          systemInstruction = `Sen Jarvis'sin — production-grade kod üreten uzman bir mühendissin.
+Her dilde (Python, JS/TS, C, C++, Java, Rust, Go, SQL, HTML/CSS, VHDL, Verilog, Assembly vb.) hatasız, çalışır, üretime hazır kod üretiyorsun.
 
-[DÜŞÜNCE] etiketleri içinde önce şu adımları zihinsel olarak yürüt:
-1. Kullanıcının tam olarak ne istediğini anla
-2. Algoritmayı ve veri yapısını planla
-3. Edge case'leri listele (boş input, sınır değerleri, hata durumları)
-4. Kodu kafanda yaz, sonra sözdizimini kontrol et
-5. Potansiyel mantık hatalarını bul ve düzelt
+[DÜŞÜNCE] — Kodlamadan önce zihinsel olarak şu adımları yürüt:
+1. Kullanıcının gerçek amacını anla (yüzey istek ≠ temel ihtiyaç)
+2. Algoritmayı ve veri yapısını seç — neden bu yapı, alternatif ne?
+3. Edge case'leri listele: boş input, null/undefined, sınır değerleri, negatif sayılar, çok büyük veri, ağ hatası, izin hatası
+4. Güvenlik açıklarını tara: injection, buffer overflow, XSS, unsafe deserialization, hardcoded secret
+5. Kodu zihinsel çalıştır — çıktı doğru mu?
 [/DÜŞÜNCE]
 
-Kurallar:
-- Kod MUTLAKA çalışır ve derlenebilir olmalı. Sözdizimi hataları kesinlikle kabul edilemez.
-- HDL kodlarında (VHDL/Verilog) entity/module tanımları, port map, signal tanımları eksiksiz olmalı.
-- Kütüphane/use/import satırlarını her zaman ekle.
-- Kısa açıklama ver, sonra temiz kod bloğu yaz.
-- Kritik satırlara Türkçe yorum ekle.
-- Gerekiyorsa testbench veya kullanım örneği ver.
-- Kodu TAMAMEN üret — yarım veya pseudo kod kesinlikle yasak.
-- Her fonksiyon için input/output tiplerini belirt.
-- Hata yönetimi (try/catch, exception handling) ekle.
-- Performans açısından kritik noktalara dikkat çek.`;
+── KESİN KURALLAR ──
+✅ Kod ÇALIŞIR ve derlenir — sözdizimi hatası sıfır tolerans
+✅ Tüm import / use / #include satırları eksiksiz
+✅ Her fonksiyon: parametre tipleri + dönüş tipi + kısa docstring
+✅ Hata yönetimi zorunlu: try/catch, Result/Option, errno — dile göre uygun pattern
+✅ Kritik satırlara kısa Türkçe yorum ekle (her satıra değil, sadece karmaşık mantığa)
+✅ Kodu TAMAMEN üret — yarım kod, pseudo kod, "..." ile kısaltma yasak
+✅ HDL (VHDL/Verilog): entity, port, signal, process tanımları eksiksiz olmalı
+
+── KALİTE STANDARTLARI ──
+• Değişken/fonksiyon isimleri anlamlı olsun (x, tmp, foo yasak)
+• Magic number yasak — sabitleri NAMED_CONSTANT olarak tanımla
+• Tek sorumluluk: bir fonksiyon bir iş yapsın
+• Gereksiz yorum yasak — "i'yi 1 artırır" gibi bariz yorumlar koda gürültü katar
+• Performansa dikkat: O(n²) yerine O(n log n) varsa tercih et, neden belirt
+
+── YANIT FORMATI ──
+1. 1-2 cümle yaklaşım özeti (ne yapacağını, neden bu yöntemi seçtiğini)
+2. Tam kod bloğu (dil etiketi ile)
+3. Varsa: önemli bir edge case veya güvenlik notu (gereksiz uzatma yok)
+4. İstenirse test/kullanım örneği — kullanıcı sormadıysa kısa tut`;
 
                 } else if (deepThinkingMode) {
-          systemInstruction = `MOTOR AMAÇ: Kullanıcının sorusunun arkasındaki gerçek soruyu bul ve o soruya, normal bir yanıtın asla ulaşamayacağı derinlikte, tek bir net mantık zinciriyle cevap ver. Yüzeysel cevap değil — kök neden. Birden fazla perspektif değil — tek doğru yol. Bilgi aktarımı değil — anlayış kırılması. Kullanıcı yanıtı okuduktan sonra "bunu biliyordum ama böyle düşünmemiştim" hissi yaşamalı.
+          systemInstruction = getContextualPrompt('derin analiz neden nasıl', chatHistory) + `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDERİN DÜŞÜNME MODU\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMOTOR AMAÇ: Kullanıcının sorusunun arkasındaki gerçek soruyu bul ve o soruya, normal bir yanıtın asla ulaşamayacağı derinlikte, tek bir net mantık zinciriyle cevap ver. Yüzeysel cevap değil — kök neden. Birden fazla perspektif değil — tek doğru yol. Bilgi aktarımı değil — anlayış kırılması. Kullanıcı yanıtı okuduktan sonra "bunu biliyordum ama böyle düşünmemiştim" hissi yaşamalı.
 
 Yanıttan önce [DÜŞÜNCE] etiketi içinde iç düşünce sürecini yürüt — bu kısım kullanıcıya görünmez:
 - Sorunun çekirdeğini belirle
@@ -13908,6 +15349,8 @@ GENEL DOĞRULUK KURALLARI:
 ✅ Türkçe derslerinde TDK ve MEB kurallarını esas al, yanlış sınıflandırma yapma.
 ✅ Matematik ve fen derslerinde her adımı göster, "şu anda şunu yapıyoruz çünkü..." de.`
         } else {
+          // 🧠 AKILLI PROMPT SEÇİCİ: Mesaja göre sadece gerekli bölümleri kullan
+          systemInstruction = getContextualPrompt(message, chatHistory);
           const complexityInstructions = {
             'very-low': `⚡ ANLIK YANIT MODU: Tek cümle veya maksimum 2-3 cümle. Giriş yok, kapanış yok. Sorunun tam cevabını ver ve dur. Gereksiz kelime sıfır.`,
             'low': `📌 ÖZLÜ MOD: 1-2 paragraf. Sorunun cevabını doğrudan ver. En önemli bilgiyi öne al. Bağlam gerekiyorsa tek paragraf ekle.`,
@@ -13931,6 +15374,7 @@ GENEL DOĞRULUK KURALLARI:
 
         if (!codeWritingMode) {
           systemInstruction += memorySection;
+          systemInstruction += buildUserPrefsInstruction();
         }
 
         // Görsel analizi bağlamı — aynı sohbette görsel analizi yapıldıysa hatırlat
@@ -13950,8 +15394,8 @@ GENEL DOĞRULUK KURALLARI:
         const messagesToSend = [systemMessage, ...sanitizeChatHistory(chatHistory.slice(historySlice))];
 
         if (codeWritingMode) {
-          // Kod yazma: qwen/qwen3-32b modeli + code thinking panel UI
-          await sendCodeWriteRequest([systemMessage, ...sanitizeChatHistory(chatHistory.slice(-4))], tokenLimit);
+          // Kod yazma: history kısa + bot mesajları 1000 char ile kes — 413 önlemi
+          await sendCodeWriteRequest([systemMessage, ...sanitizeChatHistory(chatHistory.slice(-2), 1000)], tokenLimit);
         } else if (deepThinkingMode) {
           // Derin düşünme: openai/gpt-oss-120b — history kısa tut (413 önlemi)
           await sendDeepThinkRequest(messagesToSend, tokenLimit);
@@ -13963,6 +15407,12 @@ GENEL DOĞRULUK KURALLARI:
         // lastBotResponse artık sendStreamRequest içinde set edildi
         if (lastBotResponse && !shouldAutoSearch(message)) {
           await maybeVerifyWithSearch(message, lastBotResponse, chatMessages);
+        }
+
+        // ── OTOMATİK BELLEK: Kullanıcı hakkında bilgi çıkar ve kaydet ──
+        if (lastBotResponse && isAutoMemoryEnabled()) {
+          // Sadece kullanıcı mesajından çıkar — bot yanıtını geçme (sadece kullanıcı paylaşımları)
+          autoExtractAndSaveMemory(message, lastBotResponse);
         }
 
         await saveCurrentChat();
@@ -15022,7 +16472,7 @@ GENEL DOĞRULUK KURALLARI:
 
       newChatBtn.addEventListener('click', () => {
         currentChatId = null;
-        chatHistory = [];
+        chatHistory = []; searchContextWindow = [];
         lastBotResponse = null;
         window._lastImageAnalysis = null;
         deactivateMode();
@@ -15138,19 +16588,19 @@ GENEL DOĞRULUK KURALLARI:
       closeMemoryModal.addEventListener('click', hideMemoryModal);
       
       clearMemoryBtn.addEventListener('click', () => {
-        if (confirm('Belleği temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
+        jarvisConfirm('Belleği temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz.', () => {
           memoryTextarea.value = '';
           clearMemory();
-        }
+        });
       });
       
       saveMemoryBtn.addEventListener('click', () => {
         const memory = memoryTextarea.value.trim();
         if (saveMemory(memory)) {
-          alert('Bellek başarıyla kaydedildi!');
+          jarvisToast('✅ Bellek başarıyla kaydedildi!');
           hideMemoryModal();
         } else {
-          alert('Bellek kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.');
+          jarvisToast('❌ Bellek kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.', 'error');
         }
       });
 
@@ -15754,7 +17204,7 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
 
         if (currentChatId === chatId) {
             currentChatId = null;
-            chatHistory = [];
+            chatHistory = []; searchContextWindow = [];
             lastBotResponse = null;
             window._lastImageAnalysis = null;
             lastSearchQuery = null;
@@ -16193,7 +17643,7 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
       let memorySection = memory ? `\n\nKULLANICI BELLEĞİ:\n${memory}\n` : '';
       const languageInstruction = supportedLanguages[selectedLanguage]?.systemPrompt || 'Lütfen Türkçe yanıt ver.';
       const medicalModule = (typeof isMedicalQuery === 'function' && isMedicalQuery(message) && typeof getMedicalSystemPrompt === 'function') ? getMedicalSystemPrompt() : '';
-      const systemMessage = { role: 'system', content: self.human_like_instructions + medicalModule + memorySection + '\n\n' + languageInstruction };
+      const systemMessage = { role: 'system', content: getContextualPrompt(lastUserMessage || '', chatHistory) + medicalModule + memorySection + buildUserPrefsInstruction() + '\n\n' + languageInstruction };
       const messagesToSend = [systemMessage, ...sanitizeChatHistory(chatHistory.slice(-30))];
       await sendStreamRequest(messagesToSend, tokenLimit);
       estimateTokens();
@@ -16592,7 +18042,7 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
               retryBotMessage(contextTargetMsg);
               break;
             case 'delete':
-              if (confirm('Bu mesajı silmek istediğinize emin misiniz?')) deleteMessage(contextTargetMsg);
+              jarvisConfirm('Bu mesajı silmek istediğinize emin misiniz?', () => deleteMessage(contextTargetMsg));
               break;
           }
           hideMsgContextMenu();
@@ -16644,7 +18094,7 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         bubbleShape: 'modern',
         fontFamily: 'Inter',
         sendEffect: 'particles',
-        fontSize: 'medium'
+        fontSize: 'normal'
       };
 
       // Gradient ve renk tanımları
@@ -16676,7 +18126,7 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
           if (saved) {
             currentTheme = JSON.parse(saved);
             if (!currentTheme.sendEffect) currentTheme.sendEffect = 'particles';
-            if (!currentTheme.fontSize) currentTheme.fontSize = 'medium';
+            if (!currentTheme.fontSize) currentTheme.fontSize = 'normal';
           }
         } catch(e) {}
         window._jarvisSendEffect = currentTheme.sendEffect || 'particles';
@@ -16687,41 +18137,12 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         localStorage.setItem('jarvis_custom_theme', JSON.stringify(currentTheme));
       }
 
-      // Arkaplan uygula — body + input alanı birlikte güncellenir
+      // Arkaplan uygula
       function applyBgColor(color) {
-        let bodyBg, inputBg;
         if (color === 'gradient-purple') {
-          bodyBg = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-          inputBg = 'rgba(80, 50, 120, 0.92)';
-        } else if (color.startsWith('gradient') || color.startsWith('linear-gradient')) {
-          bodyBg = color;
-          inputBg = 'rgba(20, 20, 30, 0.92)';
+          document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         } else {
-          bodyBg = color;
-          // Rengi parse edip hafif transparan bir türev oluştur
-          try {
-            const r = parseInt(color.slice(1,3),16);
-            const g = parseInt(color.slice(3,5),16);
-            const b = parseInt(color.slice(5,7),16);
-            // Renk açıksa (luminans > 0.5) hafif koyulaştır, koyuysa aydınlat
-            const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
-            if (luminance > 0.6) {
-              // Açık renk → biraz beyaza çek
-              inputBg = `rgba(${Math.min(r+20,255)}, ${Math.min(g+20,255)}, ${Math.min(b+20,255)}, 0.96)`;
-            } else {
-              // Koyu renk → üstüne hafif siyah katman
-              inputBg = `rgba(${Math.max(r-10,0)}, ${Math.max(g-10,0)}, ${Math.max(b-10,0)}, 0.96)`;
-            }
-          } catch(e) {
-            inputBg = 'rgba(255,255,255,0.95)';
-          }
-        }
-        document.body.style.background = bodyBg;
-        // Input container'ı güncelle
-        const inputContainer = document.getElementById('message-input-container');
-        if (inputContainer) {
-          inputContainer.style.background = inputBg;
-          inputContainer.style.borderTopColor = 'rgba(128,128,128,0.2)';
+          document.body.style.background = color;
         }
       }
 
@@ -16764,16 +18185,31 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         });
       }
 
-      // Yazı boyutunu uygula
+      // Yazı büyüklüğünü uygula
+      const fontSizeMap = {
+        'small':  { base: '13px', msg: '0.82rem' },
+        'normal': { base: '15px', msg: '0.95rem' },
+        'large':  { base: '17px', msg: '1.08rem' },
+        'xlarge': { base: '19px', msg: '1.2rem'  }
+      };
+
       function applyFontSize(size) {
-        if (!size) size = 'medium';
-        document.body.classList.remove('font-size-small', 'font-size-medium', 'font-size-large', 'font-size-xlarge');
-        document.body.classList.add('font-size-' + size);
-        // Aktif butonu işaretle
+        const sz = fontSizeMap[size] || fontSizeMap['normal'];
+        let fsStyleEl = document.getElementById('jarvis-fontsize-override');
+        if (!fsStyleEl) {
+          fsStyleEl = document.createElement('style');
+          fsStyleEl.id = 'jarvis-fontsize-override';
+          document.head.appendChild(fsStyleEl);
+        }
+        fsStyleEl.textContent = `
+          body, html { font-size: ${sz.base} !important; }
+          .message-content, .user-message, .bot-message { font-size: ${sz.msg} !important; }
+          #chat-input { font-size: ${sz.msg} !important; }
+        `;
         document.querySelectorAll('.font-size-btn').forEach(btn => {
           const active = btn.dataset.size === size;
-          btn.style.borderColor = active ? '#8b5cf6' : 'transparent';
-          btn.style.background  = active ? 'rgba(139,92,246,0.12)' : '';
+          btn.style.borderColor = active ? '#8b5cf6' : '';
+          btn.style.background  = active ? 'rgba(139,92,246,0.1)' : '';
         });
       }
 
@@ -16781,7 +18217,7 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         applyBgColor(currentTheme.bgColor);
         applyBubbleStyles(currentTheme.userBubbleColor, currentTheme.bubbleShape);
         applyFontFamily(currentTheme.fontFamily || 'Inter');
-        applyFontSize(currentTheme.fontSize || 'medium');
+        applyFontSize(currentTheme.fontSize || 'normal');
         window._jarvisSendEffect = currentTheme.sendEffect || 'particles';
       }
 
@@ -16853,7 +18289,6 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
           markSelectedColorBtn(document.getElementById('user-bubble-presets'), currentTheme.userBubbleColor, 'userColor');
           markSelectedShapeBtn(currentTheme.bubbleShape);
           markSelectedSendEffectBtn(currentTheme.sendEffect || 'particles');
-          applyFontSize(currentTheme.fontSize || 'medium');
           // custom color picker değerini ayarla
           const customBg = document.getElementById('custom-bg-color');
           if (customBg && !currentTheme.bgColor.startsWith('gradient')) {
@@ -16970,15 +18405,15 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         // Sayfa açılışında aktif fontu işaretle
         applyFontFamily(currentTheme.fontFamily || 'Inter');
 
-        // Yazı boyutu butonları
+        // Yazı büyüklüğü butonları
         document.querySelectorAll('.font-size-btn').forEach(btn => {
           btn.addEventListener('click', () => {
             currentTheme.fontSize = btn.dataset.size;
             applyFontSize(currentTheme.fontSize);
           });
         });
-        // Sayfa açılışında aktif yazı boyutunu işaretle
-        applyFontSize(currentTheme.fontSize || 'medium');
+        // Sayfa açılışında uygula
+        applyFontSize(currentTheme.fontSize || 'normal');
 
         // Gönderme efekti butonları
         document.querySelectorAll('.send-effect-btn').forEach(btn => {
@@ -17012,23 +18447,22 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
               bubbleShape: 'modern',
               fontFamily: 'Inter',
               sendEffect: 'particles',
-              fontSize: 'medium'
+              fontSize: 'normal'
             };
             // Override stilini temizle
             const styleEl = document.getElementById('jarvis-theme-override');
             if (styleEl) styleEl.remove();
+            const fsStyleEl = document.getElementById('jarvis-fontsize-override');
+            if (fsStyleEl) fsStyleEl.remove();
             document.body.style.background = '';
-            // Input container'ı sıfırla
-            const inputCont = document.getElementById('message-input-container');
-            if (inputCont) { inputCont.style.background = ''; inputCont.style.borderTopColor = ''; }
-            // Yazı boyutunu sıfırla
-            applyFontSize('medium');
+            document.body.style.fontSize = '';
             localStorage.removeItem('jarvis_custom_theme');
             updatePreview();
             markSelectedColorBtn(document.getElementById('bg-color-presets'), currentTheme.bgColor, 'bg');
             markSelectedColorBtn(document.getElementById('user-bubble-presets'), currentTheme.userBubbleColor, 'userColor');
             markSelectedShapeBtn(currentTheme.bubbleShape);
             markSelectedSendEffectBtn(currentTheme.sendEffect || 'particles');
+            applyFontSize(currentTheme.fontSize || 'normal');
             document.getElementById('bg-color-hex').textContent = currentTheme.bgColor;
             document.getElementById('user-color-hex').textContent = currentTheme.userBubbleColor;
             document.getElementById('custom-bg-color').value = currentTheme.bgColor;
@@ -17165,7 +18599,7 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
         });
       } else {
         // Desteklenmiyor ya da zaten kurulu
-        alert('Bu uygulama zaten yüklü ya da tarayıcınız bu özelliği desteklemiyor.');
+        jarvisToast('Bu uygulama zaten yüklü ya da tarayıcınız bu özelliği desteklemiyor.');
       }
     });
 
@@ -17181,3 +18615,152 @@ Daha fazla dil desteği sunmak, daha gelişmiş özellikler eklemek ve kullanıc
 
   })();
   </script>
+
+<!-- ══════════════════════════════════════════════
+     CUSTOM CONFIRM MODAL + TOAST — native alert/confirm yerine
+══════════════════════════════════════════════ -->
+
+<!-- Confirm Modal HTML -->
+<div id="jarvis-confirm-modal" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;">
+  <div id="jarvis-confirm-box" style="background:var(--jarvis-modal-bg,#1a1a1a);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px 24px 20px;max-width:340px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,0.5);text-align:center;transform:scale(0.9);opacity:0;transition:transform 0.2s ease,opacity 0.2s ease;">
+    <div id="jarvis-confirm-icon" style="font-size:2.2rem;margin-bottom:12px;">⚠️</div>
+    <p id="jarvis-confirm-text" style="font-size:0.95rem;color:var(--jarvis-modal-text,#e2e8f0);line-height:1.6;margin:0 0 20px;font-family:'Inter',sans-serif;"></p>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button id="jarvis-confirm-cancel" style="flex:1;padding:11px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:var(--jarvis-modal-text,#94a3b8);font-size:0.9rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">İptal</button>
+      <button id="jarvis-confirm-ok" style="flex:1;padding:11px 16px;border-radius:12px;border:none;background:#ef4444;color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">Tamam</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="jarvis-toast-container" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:999998;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;"></div>
+
+<script>
+(function() {
+  // ── Tema uyumu için renk ayarı ──
+  function updateModalTheme() {
+    var isDark = document.documentElement.classList.contains('dark') || document.body.classList.contains('dark');
+    var box = document.getElementById('jarvis-confirm-box');
+    if (!box) return;
+    if (isDark) {
+      box.style.background = '#1a1a1a';
+      box.style.setProperty('--jarvis-modal-bg','#1a1a1a');
+      box.style.setProperty('--jarvis-modal-text','#e2e8f0');
+    } else {
+      box.style.background = '#ffffff';
+      box.style.setProperty('--jarvis-modal-bg','#ffffff');
+      box.style.setProperty('--jarvis-modal-text','#1e293b');
+    }
+  }
+
+  // ── jarvisConfirm(mesaj, onOk, options) ──
+  window.jarvisConfirm = function(message, onOk, options) {
+    options = options || {};
+    var modal = document.getElementById('jarvis-confirm-modal');
+    var box   = document.getElementById('jarvis-confirm-box');
+    var textEl = document.getElementById('jarvis-confirm-text');
+    var iconEl = document.getElementById('jarvis-confirm-icon');
+    var okBtn  = document.getElementById('jarvis-confirm-ok');
+    var cancelBtn = document.getElementById('jarvis-confirm-cancel');
+
+    updateModalTheme();
+    textEl.textContent = message;
+    iconEl.textContent = options.icon || '⚠️';
+    okBtn.textContent  = options.okLabel || 'Tamam';
+    okBtn.style.background = options.danger !== false ? '#ef4444' : '#34d399';
+    cancelBtn.textContent = options.cancelLabel || 'İptal';
+
+    modal.style.display = 'flex';
+    requestAnimationFrame(function() {
+      box.style.transform = 'scale(1)';
+      box.style.opacity   = '1';
+    });
+
+    function close() {
+      box.style.transform = 'scale(0.9)';
+      box.style.opacity   = '0';
+      setTimeout(function() { modal.style.display = 'none'; }, 200);
+      okBtn.removeEventListener('click', handleOk);
+      cancelBtn.removeEventListener('click', close);
+      modal.removeEventListener('click', handleBackdrop);
+    }
+
+    function handleOk() {
+      close();
+      if (typeof onOk === 'function') onOk();
+    }
+
+    function handleBackdrop(e) {
+      if (e.target === modal) close();
+    }
+
+    okBtn.addEventListener('click', handleOk);
+    cancelBtn.addEventListener('click', close);
+    modal.addEventListener('click', handleBackdrop);
+  };
+
+  // ── jarvisToast(mesaj, tip) ──
+  // tip: 'success' | 'error' | 'warn' | 'info' (default)
+  window.jarvisToast = function(message, type) {
+    var container = document.getElementById('jarvis-toast-container');
+    if (!container) return;
+
+    var colors = {
+      success: { bg: '#166534', border: '#22c55e', icon: '✅' },
+      error:   { bg: '#7f1d1d', border: '#ef4444', icon: '❌' },
+      warn:    { bg: '#78350f', border: '#f59e0b', icon: '⚠️' },
+      info:    { bg: '#1e3a5f', border: '#3b82f6', icon: 'ℹ️' }
+    };
+    var isDark = document.documentElement.classList.contains('dark') || document.body.classList.contains('dark');
+    var c = colors[type] || colors.info;
+
+    // Light mod için farklı renkler
+    if (!isDark) {
+      var lightColors = {
+        success: { bg: '#f0fdf4', border: '#22c55e', textColor: '#166534', icon: '✅' },
+        error:   { bg: '#fef2f2', border: '#ef4444', textColor: '#991b1b', icon: '❌' },
+        warn:    { bg: '#fffbeb', border: '#f59e0b', textColor: '#92400e', icon: '⚠️' },
+        info:    { bg: '#eff6ff', border: '#3b82f6', textColor: '#1e40af', icon: 'ℹ️' }
+      };
+      c = lightColors[type] || lightColors.info;
+    }
+
+    var toast = document.createElement('div');
+    toast.style.cssText = [
+      'display:flex', 'align-items:center', 'gap:10px',
+      'padding:12px 18px',
+      'border-radius:14px',
+      'border:1px solid ' + c.border,
+      'background:' + c.bg,
+      'color:' + (c.textColor || '#f1f5f9'),
+      'font-size:0.88rem',
+      'font-weight:600',
+      'font-family:Inter,sans-serif',
+      'box-shadow:0 8px 24px rgba(0,0,0,0.3)',
+      'pointer-events:auto',
+      'max-width:320px',
+      'opacity:0',
+      'transform:translateY(16px)',
+      'transition:opacity 0.25s ease,transform 0.25s ease',
+      'cursor:pointer'
+    ].join(';');
+
+    toast.innerHTML = '<span style="font-size:1.1rem">' + c.icon + '</span><span>' + message + '</span>';
+    container.appendChild(toast);
+
+    requestAnimationFrame(function() {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+    });
+
+    function removeToast() {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(16px)';
+      setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 260);
+    }
+
+    toast.addEventListener('click', removeToast);
+    setTimeout(removeToast, 3500);
+  };
+})();
+</script>
